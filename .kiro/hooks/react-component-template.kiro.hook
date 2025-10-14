@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "React Component Template",
+  "description": "Automatically inserts a basic React component template with hello world content into newly created .tsx files in the src directory",
+  "version": "1",
+  "when": {
+    "type": "fileCreated",
+    "patterns": [
+      "src/**/*.tsx",
+      "/src"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A new .tsx file has been created in the src directory. Please insert a basic React component template with the following structure: 1) Import React if needed, 2) Create a functional component with the same name as the file (capitalize first letter), 3) Return a fragment and a div with 'Hello World' text, 4) Export the component as default. Make sure the component name matches the filename."
+  }
+}
