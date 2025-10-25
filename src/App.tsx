@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./Root";
-import Other from "./pages/other";
+import Home from "./pages/Home";
+import { CartProvider } from "./contexts/cartContext";
 
 const router = createBrowserRouter([
   {
@@ -9,7 +10,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Other />,
+        element: <Home />,
       },
     ],
   },
@@ -18,7 +19,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <>
-      <RouterProvider router={router} />
+      <CartProvider>
+        <RouterProvider router={router} />
+      </CartProvider>
     </>
   );
 }

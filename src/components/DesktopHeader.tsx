@@ -1,20 +1,36 @@
 import { FaSearch } from "react-icons/fa";
 import {
   FaBox,
-  FaAddressBook,
   FaCodeMerge,
   FaFileLines,
   FaWandMagicSparkles,
   FaBorderNone,
   FaGear,
+  FaCartShopping,
 } from "react-icons/fa6";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { CartContext } from "../contexts/cartContext";
 
 function DesktopHeader() {
+  const { cartCount } = useContext(CartContext)!;
+
   const icons = [
     { id: "box", icon: <FaBox />, label: "Dashboard" },
-    { id: "address", icon: <FaAddressBook />, label: "Contacts" },
+    {
+      id: "cart",
+      icon: (
+        <div className="relative">
+          <FaCartShopping />
+          {cartCount > 0 && (
+            <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-0.5 text-[0.65rem] font-bold leading-none text-white bg-red-600 rounded-full">
+              {cartCount}
+            </span>
+          )}
+        </div>
+      ),
+      label: "Cart",
+    },
     { id: "merge", icon: <FaCodeMerge />, label: "Merge Code" },
     { id: "files", icon: <FaFileLines />, label: "Files" },
     { id: "magic", icon: <FaWandMagicSparkles />, label: "Ai analyze" },
@@ -31,11 +47,11 @@ function DesktopHeader() {
     <>
       <AnimatePresence>
         <aside
-          className="group/aside fixed left-0 bottom-0 h-screen w-20 bg-gray-900 text-white flex flex-col py-6 shadow-2xl rounded-r-2xl transition-all duration-300 hover:w-60"
+          className="z-10 group/aside fixed left-0 bottom-0 h-screen w-20 bg-gray-900 text-white flex flex-col py-6 shadow-2xl rounded-r-2xl transition-all duration-300 hover:w-60"
           onMouseEnter={() => setIsHover(true)}
           onMouseLeave={() => setIsHover(false)}
         >
-          <div className="flex flex-col gap-8 mt-6 w-full items-center group-hover/aside:items-start p-3">
+          <div className="z-10 flex flex-col gap-8 mt-6 w-full items-center group-hover/aside:items-start p-3">
             {icons.map((item) =>
               isHover ? (
                 // ✅ Expanded version
@@ -51,7 +67,7 @@ function DesktopHeader() {
                       : "hover:bg-gray-800"
                   }`}
                 >
-                  <div className="flex flex-row items-center gap-3 p-2">
+                  <div className="z-10 flex flex-row items-center gap-3 p-2">
                     <button className="relative group/button">
                       {item.icon}
                     </button>

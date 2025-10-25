@@ -9,7 +9,7 @@ function Root() {
   return (
     <>
       {isMobile ? <MobileHeader /> : <DesktopHeader />}
-      <div className={`${isMobile ? "ml-0" : "ml-22"}`}>
+      <div className={`${isMobile ? "ml-0" : "ml-15"}`}>
         <Outlet />
       </div>
     </>
