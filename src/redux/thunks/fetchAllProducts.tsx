@@ -5,7 +5,9 @@ const fetchAllProducts = createAsyncThunk(
   "products/fetch",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get("http://localhost:5000/api/products");
+      const res = await axios.get(
+        "https://shop-backend-d4qc.onrender.com/api/products"
+      );
       console.table(res.data);
       return res.data;
     } catch (err: any) {
