@@ -7,7 +7,7 @@ import { motion } from "motion/react";
 
 function ProductCard() {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const [clickedId, setClickedId] = useState<number | null>(null);
+  // const [clickedId, setClickedId] = useState<number | null>(null);
   const { handleCart, cartItems, updateCartItem } = useContext(CartContext)!;
 
   const { products, productsStatus, productsError } = useSelector(
@@ -45,7 +45,7 @@ function ProductCard() {
   }
 
   return (
-    <div className="z-0 min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 p-4 sm:p-6 lg:p-8 relative overflow-hidden">
+    <div className="z-0 min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-4 sm:p-6 lg:p-8 relative overflow-hidden transition-colors duration-300">
       {/* Animated background elements */}
       <motion.div
         animate={{ y: [0, -20, 0] }}
@@ -87,7 +87,7 @@ function ProductCard() {
               <motion.div
                 animate={isHovered ? { y: -8 } : { y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg h-full flex flex-col transition-all duration-300"
+                className="relative bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg dark:shadow-slate-900/30 h-full flex flex-col transition-all duration-300"
               >
                 {/* Product image container */}
                 <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 aspect-square">
@@ -130,7 +130,7 @@ function ProductCard() {
                     animate={
                       isHovered ? { color: "#0369a1" } : { color: "#1f2937" }
                     }
-                    className="text-xs sm:text-sm md:text-base lg:text-lg font-bold line-clamp-2 mb-1 sm:mb-2 transition-colors duration-300"
+                    className="text-xs sm:text-sm md:text-base lg:text-lg font-bold line-clamp-2 mb-1 sm:mb-2 transition-colors duration-300 dark:text-white"
                   >
                     {product.title}
                   </motion.h3>
@@ -151,7 +151,7 @@ function ProductCard() {
                       <motion.p
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="text-xs sm:text-sm text-gray-500 mt-1 line-clamp-1"
+                        className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-1"
                       >
                         {product.caption}
                       </motion.p>
@@ -168,7 +168,7 @@ function ProductCard() {
                     transition={{ duration: 0.3 }}
                     className="overflow-hidden mb-4"
                   >
-                    <motion.p className="text-xs sm:text-sm text-gray-600 pt-3 border-t border-gray-200">
+                    <motion.p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 pt-3 border-t border-gray-200 dark:border-slate-600">
                       {product.details}
                     </motion.p>
                   </motion.div>
@@ -180,8 +180,8 @@ function ProductCard() {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => {
                         handleCart(product.id);
-                        setClickedId(product.id);
-                        setTimeout(() => setClickedId(null), 600);
+                        // setClickedId(product.id);
+                        // setTimeout(() => setClickedId(null), 600);
                       }}
                       disabled={product.stock <= 0}
                       className={`w-full font-semibold py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm md:text-base ${
@@ -199,7 +199,7 @@ function ProductCard() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg sm:rounded-xl p-1 sm:p-2 border border-blue-200"
+                        className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-slate-700 dark:to-slate-600 rounded-lg sm:rounded-xl p-1 sm:p-2 border border-blue-200 dark:border-slate-500"
                       >
                         <motion.button
                           whileHover={{ scale: 1.1 }}
@@ -210,7 +210,7 @@ function ProductCard() {
                               (cartItems[product.id] ?? 0) - 1
                             )
                           }
-                          className="flex-1 px-1 sm:px-2 py-0.5 sm:py-1 bg-white rounded text-gray-700 hover:text-red-600 font-bold text-sm transition-colors duration-200"
+                          className="flex-1 px-1 sm:px-2 py-0.5 sm:py-1 bg-white dark:bg-slate-600 rounded text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 font-bold text-sm transition-colors duration-200"
                         >
                           −
                         </motion.button>
@@ -218,7 +218,7 @@ function ProductCard() {
                           key={cartItems[product.id]}
                           animate={{ scale: [1, 1.2, 1] }}
                           transition={{ duration: 0.3 }}
-                          className="flex-1 text-center font-bold text-blue-600 text-xs sm:text-sm"
+                          className="flex-1 text-center font-bold text-blue-600 dark:text-blue-400 text-xs sm:text-sm"
                         >
                           {cartItems[product.id]}
                         </motion.div>
