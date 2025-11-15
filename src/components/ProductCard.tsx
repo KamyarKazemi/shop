@@ -1,18 +1,12 @@
 import { useSelector } from "react-redux";
-import { fetchAllProducts } from "../redux/thunks/fetchAllProducts";
 import type { Product } from "../redux/slices/fetchAllProducts";
-import { useEffect, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import type { RootState } from "../redux/store";
-import store from "../redux/store";
 import { CartContext } from "../contexts/cartContext";
 
 function ProductCard() {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const { handleCart } = useContext(CartContext)!;
-
-  useEffect(() => {
-    store.dispatch(fetchAllProducts());
-  }, []);
+  const { handleCart, cartItems, updateCartItem } = useContext(CartContext)!;
 
   const { products, productsStatus, productsError } = useSelector(
     (state: RootState) => state.fetchAllProductsState
@@ -111,19 +105,57 @@ function ProductCard() {
                         {product.details}
                       </p>
 
-                      <button
-                        className="w-full bg-gradient-to-r from-blue-500 to-blue-600 
-                                   text-white font-semibold py-2.5 rounded-lg
-                                   cursor-pointer
-                                   hover:from-blue-600 hover:to-blue-700
-                                   transform hover:scale-[1.02] active:scale-[0.98]
-                                   transition-all duration-200 shadow-md"
-                        onClick={() => handleCart(product.id)}
-                        disabled={product.stock <= 0}
-                        aria-disabled={product.stock <= 0}
-                      >
-                        {product.stock > 0 ? "Add to Cart" : "Out of stock"}
-                      </button>
+                      <div className="pt-3 border-t border-gray-200">
+                        <div className="flex items-center gap-3">
+                          <button
+                            className="flex-1 w-full bg-gradient-to-r from-blue-500 to-blue-600 
+                                       text-white font-semibold py-2.5 rounded-lg
+                                       cursor-pointer
+                                       hover:from-blue-600 hover:to-blue-700
+                                       transform hover:scale-[1.02] active:scale-[0.98]
+                                       transition-all duration-200 shadow-md"
+                            onClick={() => handleCart(product.id)}
+                            disabled={product.stock <= 0}
+                            aria-disabled={product.stock <= 0}
+                          >
+                            {product.stock > 0 ? "Add to Cart" : "Out of stock"}
+                          </button>
+
+                          {/* inline quantity controls shown when item exists in cart */}
+                          {product.stock > 0 &&
+                          (cartItems[product.id] ?? 0) > 0 ? (
+                            <div className="inline-flex items-center gap-2 bg-white/5 rounded px-2 py-1">
+                              <button
+                                aria-label="Decrease quantity"
+                                onClick={() =>
+                                  updateCartItem(
+                                    product.id,
+                                    (cartItems[product.id] ?? 0) - 1
+                                  )
+                                }
+                                className="px-2 py-1 bg-white/10 rounded hover:bg-white/20"
+                              >
+                                −
+                              </button>
+                              <div className="px-2 font-semibold">
+                                {cartItems[product.id]}
+                              </div>
+                              <button
+                                aria-label="Increase quantity"
+                                onClick={() =>
+                                  updateCartItem(
+                                    product.id,
+                                    (cartItems[product.id] ?? 0) + 1
+                                  )
+                                }
+                                className="px-2 py-1 bg-white/10 rounded hover:bg-white/20"
+                              >
+                                +
+                              </button>
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

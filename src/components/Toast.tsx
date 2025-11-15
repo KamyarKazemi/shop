@@ -1,36 +1,61 @@
-import type { Dispatch, SetStateAction } from "react";
+type Notification = {
+  text: string;
+  type: "error" | "success";
+  count?: number;
+  product?: { id: number; title: string; price?: string | number };
+} | null;
 
-type Notification = { text: string; type: "error" | "success" } | null;
-
-function Toast({
+export default function Toast({
   notification,
   setNotification,
 }: {
   notification: Notification;
-  setNotification: Dispatch<SetStateAction<Notification>>;
+  setNotification: (n: Notification) => void;
 }) {
+  // Debug: log when Toast renders so you can check the browser console
+  if (notification) {
+    // eslint-disable-next-line no-console
+    console.log("Toast rendering:", notification);
+  }
+
   if (!notification) return null;
 
-  const isError = notification.type === "error";
+  const bg = notification.type === "error" ? "bg-red-600" : "bg-green-600";
 
   return (
-    <div className={`fixed left-1/2 bottom-8 -translate-x-1/2 z-50`}>
-      <div
-        className={`px-4 py-2 rounded-lg shadow-lg text-sm font-medium flex items-center gap-3 ${
-          isError ? "bg-red-600 text-white" : "bg-green-600 text-white"
-        }`}
-      >
-        <span>{notification.text}</span>
+    <div
+      role="status"
+      aria-live="polite"
+      className={`fixed right-6 bottom-6 z-50 ${bg} text-white rounded-lg shadow-lg`}
+    >
+      <div className="flex items-center gap-4 p-4 max-w-md">
+        <div className="flex-1">
+          <div className="font-semibold">{notification.text}</div>
+          {notification.product ? (
+            <div className="text-sm opacity-90 mt-1">
+              {notification.product.title}
+              {notification.product.price !== undefined && (
+                <span className="ml-2 text-xs">
+                  — ${String(notification.product.price)}
+                </span>
+              )}
+            </div>
+          ) : null}
+        </div>
+        {typeof notification.count === "number" ? (
+          <div className="flex flex-col items-center justify-center px-3 py-1 bg-white/20 rounded">
+            <div className="text-xs">Cart</div>
+            <div className="font-bold text-lg">{notification.count}</div>
+          </div>
+        ) : null}
         <button
           onClick={() => setNotification(null)}
-          className="ml-3 text-white/80 hover:text-white"
-          aria-label="dismiss"
+          aria-label="Close notification"
+          className="font-bold px-3 py-1 rounded bg-white/20 hover:bg-white/30"
         >
-          ✕
+          x
         </button>
       </div>
     </div>
   );
 }
-
-export default Toast;

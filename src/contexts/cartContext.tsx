@@ -6,31 +6,48 @@ import type { RootState } from "../redux/store";
 import store from "../redux/store";
 import Toast from "../components/Toast";
 
-type Notification = { text: string; type: "error" | "success" } | null;
+type Notification = {
+  text: string;
+  type: "error" | "success";
+  count?: number; // updated cart count after the action
+  product?: { id: number; title: string; price?: string | number };
+} | null;
+
+// interface AddedItems {
+//   [productId: string]: number;
+// }
 
 type CartContextType = {
   cartCount: number;
   cartItems: Record<number, number>;
   handleCart: (productId: number, qty?: number) => boolean;
+  removeFromCart: (productId: number) => void;
+  updateCartItem: (productId: number, qty: number) => boolean;
   refreshProducts: () => void;
   notification: Notification;
   setNotification: (n: Notification) => void;
+  cartEntries: object;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 function CartProvider({ children }: { children: ReactNode }) {
-  // ensure products are loaded so we can compute cartCount
-  useEffect(() => {
-    store.dispatch(fetchAllProducts());
-  }, []);
+  const [cartItems, setCartItems] = useState<Record<number, number>>({});
+  const [notification, setNotification] = useState<Notification>(null);
 
   const products = useSelector(
     (state: RootState) => state.fetchAllProductsState.products
   );
+  const cartEntries = Object.entries(cartItems); // [ [id, qty], [id, qty], ... ]
 
-  const [cartItems, setCartItems] = useState<Record<number, number>>({});
-  const [notification, setNotification] = useState<Notification>(null);
+  // persist cartItems to localStorage (save)
+  useEffect(() => {
+    try {
+      localStorage.setItem("cart_items_v1", JSON.stringify(cartItems));
+    } catch {
+      // ignore
+    }
+  }, [cartItems]);
 
   // persist cartItems to localStorage (load)
   useEffect(() => {
@@ -50,15 +67,6 @@ function CartProvider({ children }: { children: ReactNode }) {
       // ignore parse errors
     }
   }, []);
-
-  // persist cartItems to localStorage (save)
-  useEffect(() => {
-    try {
-      localStorage.setItem("cart_items_v1", JSON.stringify(cartItems));
-    } catch {
-      // ignore
-    }
-  }, [cartItems]);
 
   // auto-clear notifications after 3s
   useEffect(() => {
@@ -89,9 +97,50 @@ function CartProvider({ children }: { children: ReactNode }) {
     }
 
     // Optimistic local update: update cart immediately and notify
-    const newCart = { ...cartItems, [productId]: current + qty };
-    setCartItems(newCart);
-    setNotification({ text: `Added ${qty} item(s) to cart.`, type: "success" });
+    // compute new cart count for notification
+    const currentCount = Object.values(cartItems).reduce((a, b) => a + b, 0);
+    const newCount = currentCount + qty;
+
+    setCartItems((prev) => {
+      const updated = { ...prev, [productId]: (prev[productId] ?? 0) + qty };
+      console.table(updated);
+      return updated;
+    });
+    // send richer notification including product brief and updated count
+    setNotification({
+      text: `Added ${qty} item(s) to cart.`,
+      type: "success",
+      count: newCount,
+      product: product
+        ? { id: product.id, title: product.title, price: product.price }
+        : undefined,
+    });
+    return true;
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCartItems((prev) => {
+      const copy = { ...prev };
+      delete copy[productId];
+      return copy;
+    });
+  };
+
+  const updateCartItem = (productId: number, qty: number): boolean => {
+    const product = products?.find((p) => p.id === productId);
+    const stock = product?.stock ?? 0;
+    if (qty > stock) {
+      setNotification({
+        text: `Cannot set quantity to ${qty}. Only ${stock} item(s) in stock.`,
+        type: "error",
+      });
+      return false;
+    }
+    if (qty <= 0) {
+      removeFromCart(productId);
+      return true;
+    }
+    setCartItems((prev) => ({ ...prev, [productId]: qty }));
     return true;
   };
 
@@ -101,8 +150,11 @@ function CartProvider({ children }: { children: ReactNode }) {
 
   const cartEssentials: CartContextType = {
     cartCount,
+    cartEntries,
     cartItems,
     handleCart,
+    removeFromCart,
+    updateCartItem,
     refreshProducts,
     notification,
     setNotification,

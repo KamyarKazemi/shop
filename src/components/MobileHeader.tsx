@@ -9,6 +9,7 @@ import {
   FaArrowUp,
   FaArrowDown,
 } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 function MobileHeader() {
   const [isHover, setIsHover] = useState(false);
@@ -21,27 +22,29 @@ function MobileHeader() {
       id: "box",
       icon: (
         <>
-          <div
-            className={`z-10 flex items-center gap-3 bg-black p-2 text-white rounded-2xl`}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onClick={() => toggleDropdown()}
-          >
-            <FaBox />
-            {isDropdownShown ? (
-              <FaArrowUp
-                className={` transition-all duration-300 ${
-                  isIconHovered ? "text-[1.2rem]" : "text-[0.9rem]"
-                }`}
-              />
-            ) : (
-              <FaArrowDown
-                className={` transition-all duration-300 ${
-                  isIconHovered ? "text-[1.2rem]" : "text-[0.9rem]"
-                }`}
-              />
-            )}
-          </div>
+          <Link to="/">
+            <div
+              className={`z-10 flex items-center gap-3 bg-black p-2 text-white rounded-2xl`}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              onClick={() => toggleDropdown()}
+            >
+              <FaBox />
+              {isDropdownShown ? (
+                <FaArrowUp
+                  className={` transition-all duration-300 ${
+                    isIconHovered ? "text-[1.2rem]" : "text-[0.9rem]"
+                  }`}
+                />
+              ) : (
+                <FaArrowDown
+                  className={` transition-all duration-300 ${
+                    isIconHovered ? "text-[1.2rem]" : "text-[0.9rem]"
+                  }`}
+                />
+              )}
+            </div>
+          </Link>
         </>
       ),
       label: "Dashboard",

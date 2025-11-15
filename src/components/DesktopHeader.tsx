@@ -11,23 +11,34 @@ import {
 import { useState, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { CartContext } from "../contexts/cartContext";
+import { Link } from "react-router-dom";
 
 function DesktopHeader() {
   const { cartCount } = useContext(CartContext)!;
 
   const icons = [
-    { id: "box", icon: <FaBox />, label: "Dashboard" },
+    {
+      id: "box",
+      icon: (
+        <Link to="/">
+          <FaBox />
+        </Link>
+      ),
+      label: "Dashboard",
+    },
     {
       id: "cart",
       icon: (
-        <div className="relative">
-          <FaCartShopping />
-          {cartCount > 0 && (
-            <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-0.5 text-[0.65rem] font-bold leading-none text-white bg-red-600 rounded-full">
-              {cartCount}
-            </span>
-          )}
-        </div>
+        <Link to="/cart">
+          <div className="relative">
+            <FaCartShopping />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-0.5 text-[0.65rem] font-bold leading-none text-white bg-red-600 rounded-full">
+                {cartCount}
+              </span>
+            )}
+          </div>
+        </Link>
       ),
       label: "Cart",
     },
