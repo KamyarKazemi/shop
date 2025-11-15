@@ -116,7 +116,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-200 mt-auto relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-200 mt-auto relative overflow-hidden z-0">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -397,7 +397,7 @@ export default function Footer() {
             transition={{ duration: 0.4, type: "spring", stiffness: 200 }}
             onClick={scrollToTop}
             aria-label="Back to top"
-            className="fixed bottom-8 right-8 z-40 p-4 bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600 text-white rounded-full shadow-2xl transition-all duration-300"
+            className="fixed bottom-24 md:bottom-8 right-4 md:right-8 z-40 p-4 bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600 text-white rounded-full shadow-2xl transition-all duration-300"
             whileHover={{
               scale: 1.15,
               boxShadow: "0 0 40px rgba(59, 130, 246, 0.8)",

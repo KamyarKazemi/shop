@@ -3,9 +3,11 @@ import type { Product } from "../redux/slices/fetchAllProducts";
 import { useState, useContext } from "react";
 import type { RootState } from "../redux/store";
 import { CartContext } from "../contexts/cartContext";
+import { motion } from "motion/react";
 
 function ProductCard() {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
+  const [clickedId, setClickedId] = useState<number | null>(null);
   const { handleCart, cartItems, updateCartItem } = useContext(CartContext)!;
 
   const { products, productsStatus, productsError } = useSelector(
@@ -14,156 +16,234 @@ function ProductCard() {
 
   if (productsStatus === "loading") {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <h3 className="text-2xl font-semibold text-gray-600">
-          Loading products...
-        </h3>
-      </div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex items-center justify-center min-h-screen"
+      >
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          className="w-16 h-16 border-4 border-blue-300 border-t-blue-600 rounded-full"
+        />
+      </motion.div>
     );
   }
 
   if (productsStatus === "failed") {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center justify-center min-h-screen"
+      >
         <h3 className="text-2xl font-semibold text-red-600">
           Error: {productsError}
         </h3>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div className=" z-0 min-h-screen bg-gradient-to-br from-gray-50 to-gray-150 p-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
-        {products?.map((product: Product) => {
-          const isHovered = hoveredId === product.id;
+    <div className="z-0 min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 p-4 sm:p-6 lg:p-8 relative overflow-hidden">
+      {/* Animated background elements */}
+      <motion.div
+        animate={{ y: [0, -20, 0] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-300/20 to-purple-300/20 rounded-full blur-3xl -z-10"
+      />
+      <motion.div
+        animate={{ y: [0, 20, 0] }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1,
+        }}
+        className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-300/20 to-blue-300/20 rounded-full blur-3xl -z-10"
+      />
 
-          //
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 xs:gap-3 sm:gap-4 md:gap-5 lg:gap-6 max-w-full mx-auto"
+      >
+        {products?.map((product: Product, idx: number) => {
+          const isHovered = hoveredId === product.id;
+          const itemInCart = (cartItems[product.id] ?? 0) > 0;
 
           return (
-            <div
+            <motion.div
               key={product.id}
-              className="relative xl:max-w-[85%] md:max-w-[100%] group"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: idx * 0.05 }}
+              viewport={{ once: true, amount: 0.3 }}
+              className="relative h-full group"
               onMouseEnter={() => setHoveredId(product.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
-              <div
-                className={`
-                  relative bg-white rounded-2xl overflow-hidden shadow-lg
-                  transition-all duration-300 ease-out
-                  ${isHovered ? "scale-105 shadow-2xl" : "scale-100"}
-                `}
+              <motion.div
+                animate={isHovered ? { y: -8 } : { y: 0 }}
+                transition={{ duration: 0.3 }}
+                className="relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg h-full flex flex-col transition-all duration-300"
               >
-                <div className="relative overflow-hidden bg-gray-100">
-                  <img
+                {/* Product image container */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 aspect-square">
+                  <motion.img
                     src={product.image}
                     alt={product.title}
-                    className={`
-                      w-full h-full object-cover transition-transform duration-500
-                      ${isHovered ? "scale-110" : "scale-100"}
-                    `}
+                    animate={isHovered ? { scale: 1.15 } : { scale: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="w-full h-full object-cover"
                   />
 
-                  <div
-                    className={`
-                      absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent
-                      transition-opacity duration-300
-                      ${isHovered ? "opacity-100" : "opacity-0"}
-                    `}
+                  {/* Overlay gradient on hover */}
+                  <motion.div
+                    animate={isHovered ? { opacity: 1 } : { opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
                   />
+
+                  {/* Stock badge */}
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", stiffness: 200 }}
+                    className={`absolute top-2 right-2 sm:top-4 sm:right-4 px-2 py-1 sm:px-3 sm:py-2 rounded-full font-bold text-xs sm:text-sm ${
+                      product.stock > 5
+                        ? "bg-green-500/90 text-white"
+                        : product.stock > 0
+                        ? "bg-orange-500/90 text-white"
+                        : "bg-red-500/90 text-white"
+                    }`}
+                  >
+                    {product.stock > 0 ? `${product.stock}in` : "Out"}
+                  </motion.div>
                 </div>
 
-                <div className="p-5">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">
-                      {product.title}
-                    </h3>
-                    <h3>{product.stock}</h3>
-                  </div>
+                {/* Content section */}
+                <div className="p-2 xs:p-3 sm:p-4 md:p-5 flex flex-col flex-1">
+                  {/* Title and rating */}
+                  <motion.h3
+                    animate={
+                      isHovered ? { color: "#0369a1" } : { color: "#1f2937" }
+                    }
+                    className="text-xs sm:text-sm md:text-base lg:text-lg font-bold line-clamp-2 mb-1 sm:mb-2 transition-colors duration-300"
+                  >
+                    {product.title}
+                  </motion.h3>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 gap-1 sm:gap-0">
-                    <span className="text-base font-bold text-blue-600">
+                  {/* Price and description */}
+                  <div className="flex-1 mb-2 sm:mb-3 md:mb-4">
+                    <motion.span
+                      animate={
+                        isHovered
+                          ? { fontSize: "1.1rem" }
+                          : { fontSize: "0.9rem" }
+                      }
+                      className="text-blue-600 font-bold block transition-all duration-300"
+                    >
                       ${product.price}
-                    </span>
+                    </motion.span>
                     {!isHovered && (
-                      <span className="text-sm text-gray-500">
+                      <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-xs sm:text-sm text-gray-500 mt-1 line-clamp-1"
+                      >
                         {product.caption}
-                      </span>
+                      </motion.p>
                     )}
                   </div>
 
-                  <div
-                    className={`
-                      transition-all duration-300 ease-out overflow-hidden
-                      ${
-                        isHovered ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
-                      }
-                    `}
+                  {/* Details - expanded on hover */}
+                  <motion.div
+                    animate={
+                      isHovered
+                        ? { opacity: 1, height: "auto" }
+                        : { opacity: 0, height: 0 }
+                    }
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden mb-4"
                   >
-                    <div className="pt-3 border-t border-gray-200">
-                      <p className="text-sm text-gray-600 mb-4">
-                        {product.details}
-                      </p>
+                    <motion.p className="text-xs sm:text-sm text-gray-600 pt-3 border-t border-gray-200">
+                      {product.details}
+                    </motion.p>
+                  </motion.div>
 
-                      <div className="pt-3 border-t border-gray-200">
-                        <div className="flex items-center gap-3">
-                          <button
-                            className="flex-1 w-full bg-gradient-to-r from-blue-500 to-blue-600 
-                                       text-white font-semibold py-2.5 rounded-lg
-                                       cursor-pointer
-                                       hover:from-blue-600 hover:to-blue-700
-                                       transform hover:scale-[1.02] active:scale-[0.98]
-                                       transition-all duration-200 shadow-md"
-                            onClick={() => handleCart(product.id)}
-                            disabled={product.stock <= 0}
-                            aria-disabled={product.stock <= 0}
-                          >
-                            {product.stock > 0 ? "Add to Cart" : "Out of stock"}
-                          </button>
+                  {/* Action buttons */}
+                  <div className="space-y-1 sm:space-y-2 md:space-y-3 border-t border-gray-200 pt-2 sm:pt-3 md:pt-4">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        handleCart(product.id);
+                        setClickedId(product.id);
+                        setTimeout(() => setClickedId(null), 600);
+                      }}
+                      disabled={product.stock <= 0}
+                      className={`w-full font-semibold py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm md:text-base ${
+                        product.stock <= 0
+                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                          : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg"
+                      }`}
+                    >
+                      {product.stock > 0 ? "Add" : "Out"}
+                    </motion.button>
 
-                          {/* inline quantity controls shown when item exists in cart */}
-                          {product.stock > 0 &&
-                          (cartItems[product.id] ?? 0) > 0 ? (
-                            <div className="inline-flex items-center gap-2 bg-white/5 rounded px-2 py-1">
-                              <button
-                                aria-label="Decrease quantity"
-                                onClick={() =>
-                                  updateCartItem(
-                                    product.id,
-                                    (cartItems[product.id] ?? 0) - 1
-                                  )
-                                }
-                                className="px-2 py-1 bg-white/10 rounded hover:bg-white/20"
-                              >
-                                −
-                              </button>
-                              <div className="px-2 font-semibold">
-                                {cartItems[product.id]}
-                              </div>
-                              <button
-                                aria-label="Increase quantity"
-                                onClick={() =>
-                                  updateCartItem(
-                                    product.id,
-                                    (cartItems[product.id] ?? 0) + 1
-                                  )
-                                }
-                                className="px-2 py-1 bg-white/10 rounded hover:bg-white/20"
-                              >
-                                +
-                              </button>
-                            </div>
-                          ) : null}
-                        </div>
-                      </div>
-                    </div>
+                    {/* Inline quantity controls */}
+                    {product.stock > 0 && itemInCart ? (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg sm:rounded-xl p-1 sm:p-2 border border-blue-200"
+                      >
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() =>
+                            updateCartItem(
+                              product.id,
+                              (cartItems[product.id] ?? 0) - 1
+                            )
+                          }
+                          className="flex-1 px-1 sm:px-2 py-0.5 sm:py-1 bg-white rounded text-gray-700 hover:text-red-600 font-bold text-sm transition-colors duration-200"
+                        >
+                          −
+                        </motion.button>
+                        <motion.div
+                          key={cartItems[product.id]}
+                          animate={{ scale: [1, 1.2, 1] }}
+                          transition={{ duration: 0.3 }}
+                          className="flex-1 text-center font-bold text-blue-600 text-xs sm:text-sm"
+                        >
+                          {cartItems[product.id]}
+                        </motion.div>
+                        <motion.button
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() =>
+                            updateCartItem(
+                              product.id,
+                              (cartItems[product.id] ?? 0) + 1
+                            )
+                          }
+                          className="flex-1 px-1 sm:px-2 py-0.5 sm:py-1 bg-white rounded text-gray-700 hover:text-green-600 font-bold text-sm transition-colors duration-200"
+                        >
+                          +
+                        </motion.button>
+                      </motion.div>
+                    ) : null}
                   </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 }
