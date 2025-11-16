@@ -29,12 +29,6 @@ export default defineConfig({
     target: "ES2020",
     // Optimize for smaller bundle size
     minify: "terser",
-    terserOptions: {
-      compress: {
-        drop_console: true, // Remove console logs in production
-        drop_debugger: true,
-      },
-    },
     // Enable report compressed size
     reportCompressedSize: true,
     // Chunk size warning threshold
