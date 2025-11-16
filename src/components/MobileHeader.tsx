@@ -12,9 +12,11 @@ import {
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { CartContext } from "../contexts/cartContext";
+import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
 
 function MobileHeader() {
   const { cartCount } = useContext(CartContext)!;
+  const { reduceAnimations } = useAnimationOptimization();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hoveredActionId, setHoveredActionId] = useState<string | null>(null);
   const [hoveredMenuId, setHoveredMenuId] = useState<string | null>(null);
@@ -100,12 +102,14 @@ function MobileHeader() {
         transition={{ type: "spring", damping: 20 }}
         className="z-50 fixed bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-900 to-slate-800 border-t border-slate-700 shadow-2xl"
       >
-        {/* Animated background glow */}
-        <motion.div
-          animate={{ opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 4, repeat: Infinity }}
-          className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 pointer-events-none"
-        />
+        {/* Animated background glow - disabled on reduced motion */}
+        {!reduceAnimations && (
+          <motion.div
+            animate={{ opacity: [0.3, 0.6, 0.3] }}
+            transition={{ duration: 4, repeat: Infinity }}
+            className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-cyan-500/10 pointer-events-none"
+          />
+        )}
 
         <div className="relative z-10 px-3 py-3 sm:px-4 sm:py-4">
           {/* Quick Actions Row */}
@@ -214,21 +218,23 @@ function MobileHeader() {
               })}
             </div>
 
-            {/* Logo/Branding with pulsing animation */}
-            <motion.div
-              animate={{ y: [0, -4, 0] }}
-              transition={{ duration: 2.5, repeat: Infinity }}
-              className="flex-shrink-0 hidden sm:block"
-            >
-              <Link to="/">
-                <motion.span
-                  whileHover={{ scale: 1.1 }}
-                  className="text-lg font-bold text-transparent bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text"
-                >
-                  Hub
-                </motion.span>
-              </Link>
-            </motion.div>
+            {/* Logo/Branding with pulsing animation - disabled on mobile/reduced motion */}
+            {!reduceAnimations && (
+              <motion.div
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 2.5, repeat: Infinity }}
+                className="flex-shrink-0 hidden sm:block"
+              >
+                <Link to="/">
+                  <motion.span
+                    whileHover={{ scale: 1.1 }}
+                    className="text-lg font-bold text-transparent bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text"
+                  >
+                    Hub
+                  </motion.span>
+                </Link>
+              </motion.div>
+            )}
           </div>
         </div>
       </motion.header>
@@ -244,17 +250,21 @@ function MobileHeader() {
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="z-50 fixed left-0 top-0 h-full w-full sm:w-96 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 shadow-2xl border-r border-slate-700 overflow-y-auto"
           >
-            {/* Animated background elements */}
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 6, repeat: Infinity }}
-              className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-full blur-3xl pointer-events-none"
-            />
-            <motion.div
-              animate={{ scale: [1.2, 1, 1.2] }}
-              transition={{ duration: 8, repeat: Infinity, delay: 1 }}
-              className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-purple-500/5 to-pink-500/5 rounded-full blur-3xl pointer-events-none"
-            />
+            {/* Animated background elements - disabled on reduced motion */}
+            {!reduceAnimations && (
+              <>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 6, repeat: Infinity }}
+                  className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 rounded-full blur-3xl pointer-events-none"
+                />
+                <motion.div
+                  animate={{ scale: [1.2, 1, 1.2] }}
+                  transition={{ duration: 8, repeat: Infinity, delay: 1 }}
+                  className="absolute bottom-0 left-0 w-80 h-80 bg-gradient-to-tr from-purple-500/5 to-pink-500/5 rounded-full blur-3xl pointer-events-none"
+                />
+              </>
+            )}
 
             {/* Menu Header */}
             <div className="sticky top-0 bg-gradient-to-b from-slate-950 via-slate-900 to-transparent p-6 border-b border-slate-700 z-10">
@@ -266,13 +276,18 @@ function MobileHeader() {
                 <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text mb-2">
                   ShopHub
                 </h2>
-                <motion.p
-                  animate={{ opacity: [0.6, 1, 0.6] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                  className="text-sm text-slate-400"
-                >
-                  Welcome back! 👋
-                </motion.p>
+                {!reduceAnimations && (
+                  <motion.p
+                    animate={{ opacity: [0.6, 1, 0.6] }}
+                    transition={{ duration: 3, repeat: Infinity }}
+                    className="text-sm text-slate-400"
+                  >
+                    Welcome back! 👋
+                  </motion.p>
+                )}
+                {reduceAnimations && (
+                  <p className="text-sm text-slate-400">Welcome back! 👋</p>
+                )}
               </motion.div>
             </div>
 
@@ -347,8 +362,8 @@ function MobileHeader() {
                             {item.label}
                           </motion.span>
 
-                          {/* Floating particles on hover */}
-                          {isHovered && (
+                          {/* Floating particles on hover - disabled on reduced motion */}
+                          {isHovered && !reduceAnimations && (
                             <>
                               {[0, 1, 2].map((i) => (
                                 <motion.div

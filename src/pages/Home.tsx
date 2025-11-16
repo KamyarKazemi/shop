@@ -1,8 +1,10 @@
 import Products from "../components/Products";
 import { motion } from "motion/react";
 import { FaShoppingBag, FaTruck, FaAward } from "react-icons/fa";
+import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
 
 function Home() {
+  const { reduceAnimations } = useAnimationOptimization();
   const features = [
     {
       icon: <FaShoppingBag />,
@@ -30,22 +32,26 @@ function Home() {
         transition={{ duration: 0.8 }}
         className="relative w-full h-screen bg-gradient-to-br from-blue-600 via-blue-500 to-purple-600 overflow-hidden flex items-center justify-center"
       >
-        {/* Animated background elements */}
-        <motion.div
-          animate={{ y: [0, -30, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ y: [0, 30, 0] }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
-          }}
-          className="absolute bottom-10 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl"
-        />
+        {/* Animated background elements - disabled on reduced motion */}
+        {!reduceAnimations && (
+          <>
+            <motion.div
+              animate={{ y: [0, -30, 0] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl"
+            />
+            <motion.div
+              animate={{ y: [0, 30, 0] }}
+              transition={{
+                duration: 10,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 1,
+              }}
+              className="absolute bottom-10 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl"
+            />
+          </>
+        )}
 
         {/* Content */}
         <div className="relative z-10 text-center px-4 sm:px-8 max-w-4xl mx-auto">
@@ -81,25 +87,27 @@ function Home() {
           </motion.a>
         </div>
 
-        {/* Floating cards animation */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 pointer-events-none"
-        >
-          <div className="absolute top-1/4 left-1/4 text-white/30 text-6xl">
-            📦
-          </div>
-          <div className="absolute top-1/3 right-1/4 text-white/30 text-6xl">
-            🛍️
-          </div>
-          <div className="absolute bottom-1/4 left-1/3 text-white/30 text-6xl">
-            💳
-          </div>
-          <div className="absolute bottom-1/3 right-1/3 text-white/30 text-6xl">
-            ⭐
-          </div>
-        </motion.div>
+        {/* Floating cards animation - disabled on reduced motion */}
+        {!reduceAnimations && (
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute inset-0 pointer-events-none"
+          >
+            <div className="absolute top-1/4 left-1/4 text-white/30 text-6xl">
+              📦
+            </div>
+            <div className="absolute top-1/3 right-1/4 text-white/30 text-6xl">
+              🛍️
+            </div>
+            <div className="absolute bottom-1/4 left-1/3 text-white/30 text-6xl">
+              💳
+            </div>
+            <div className="absolute bottom-1/3 right-1/3 text-white/30 text-6xl">
+              ⭐
+            </div>
+          </motion.div>
+        )}
       </motion.section>
 
       {/* Features Section */}

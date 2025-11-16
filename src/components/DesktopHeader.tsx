@@ -11,10 +11,12 @@ import {
 import { useState, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { CartContext } from "../contexts/cartContext";
+import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
 import { Link } from "react-router-dom";
 
 function DesktopHeader() {
   const { cartCount } = useContext(CartContext)!;
+  const { reduceAnimations } = useAnimationOptimization();
 
   const icons = [
     {
@@ -109,12 +111,14 @@ function DesktopHeader() {
             setHoveredId(null);
           }}
         >
-          {/* Animated background glow */}
-          <motion.div
-            animate={{ opacity: [0.3, 0.6, 0.3] }}
-            transition={{ duration: 3, repeat: Infinity }}
-            className="absolute inset-0 bg-gradient-to-b from-blue-500/10 via-transparent to-purple-500/10 rounded-r-3xl pointer-events-none"
-          />
+          {/* Animated background glow - disabled on reduced motion */}
+          {!reduceAnimations && (
+            <motion.div
+              animate={{ opacity: [0.3, 0.6, 0.3] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="absolute inset-0 bg-gradient-to-b from-blue-500/10 via-transparent to-purple-500/10 rounded-r-3xl pointer-events-none"
+            />
+          )}
 
           <div className="z-10 flex flex-col gap-6 mt-6 w-full items-center group-hover/aside:items-start p-3">
             {icons.map((item, idx) => {
@@ -151,7 +155,7 @@ function DesktopHeader() {
                       }}
                       className="relative group/button text-lg transition-colors duration-200"
                     >
-                      {isHoveredIcon && (
+                      {isHoveredIcon && !reduceAnimations && (
                         <>
                           {/* Glow effect on hovered icon */}
                           <motion.div
@@ -219,8 +223,8 @@ function DesktopHeader() {
                     {item.icon}
                   </motion.span>
 
-                  {/* Glow pulse on hovered icon */}
-                  {isHoveredIcon && (
+                  {/* Glow pulse on hovered icon - disabled on reduced motion */}
+                  {isHoveredIcon && !reduceAnimations && (
                     <motion.div
                       animate={{
                         scale: [1, 1.8, 1],
@@ -234,8 +238,8 @@ function DesktopHeader() {
                     />
                   )}
 
-                  {/* Floating particles on hover */}
-                  {isHoveredIcon && (
+                  {/* Floating particles on hover - disabled on reduced motion */}
+                  {isHoveredIcon && !reduceAnimations && (
                     <>
                       {[0, 1, 2].map((i) => (
                         <motion.div
@@ -291,12 +295,14 @@ function DesktopHeader() {
             })}
           </div>
 
-          {/* Decorative bottom element */}
-          <motion.div
-            animate={{ y: [0, 10, 0] }}
-            transition={{ duration: 3, repeat: Infinity }}
-            className="mt-auto mb-4 mx-auto w-8 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full opacity-60"
-          />
+          {/* Decorative bottom element - disabled on reduced motion */}
+          {!reduceAnimations && (
+            <motion.div
+              animate={{ y: [0, 10, 0] }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="mt-auto mb-4 mx-auto w-8 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full opacity-60"
+            />
+          )}
         </motion.aside>
       </AnimatePresence>
     </>

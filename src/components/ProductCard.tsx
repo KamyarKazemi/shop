@@ -4,11 +4,12 @@ import { useState, useContext } from "react";
 import type { RootState } from "../redux/store";
 import { CartContext } from "../contexts/cartContext";
 import { motion } from "motion/react";
+import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
 
 function ProductCard() {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  // const [clickedId, setClickedId] = useState<number | null>(null);
   const { handleCart, cartItems, updateCartItem } = useContext(CartContext)!;
+  const { reduceAnimations } = useAnimationOptimization();
 
   const { products, productsStatus, productsError } = useSelector(
     (state: RootState) => state.fetchAllProductsState
@@ -22,8 +23,12 @@ function ProductCard() {
         className="flex items-center justify-center min-h-screen"
       >
         <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+          animate={reduceAnimations ? {} : { rotate: 360 }}
+          transition={
+            reduceAnimations
+              ? {}
+              : { duration: 2, repeat: Infinity, ease: "linear" }
+          }
           className="w-16 h-16 border-4 border-blue-300 border-t-blue-600 rounded-full"
         />
       </motion.div>
@@ -46,22 +51,26 @@ function ProductCard() {
 
   return (
     <div className="z-0 min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 p-4 sm:p-6 lg:p-8 relative overflow-hidden transition-colors duration-300">
-      {/* Animated background elements */}
-      <motion.div
-        animate={{ y: [0, -20, 0] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-300/20 to-purple-300/20 rounded-full blur-3xl -z-10"
-      />
-      <motion.div
-        animate={{ y: [0, 20, 0] }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1,
-        }}
-        className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-300/20 to-blue-300/20 rounded-full blur-3xl -z-10"
-      />
+      {/* Animated background elements - disabled on reduced motion */}
+      {!reduceAnimations && (
+        <>
+          <motion.div
+            animate={{ y: [0, -20, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-300/20 to-purple-300/20 rounded-full blur-3xl -z-10"
+          />
+          <motion.div
+            animate={{ y: [0, 20, 0] }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1,
+            }}
+            className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-br from-cyan-300/20 to-blue-300/20 rounded-full blur-3xl -z-10"
+          />
+        </>
+      )}
 
       <motion.div
         initial={{ opacity: 0 }}
@@ -72,21 +81,23 @@ function ProductCard() {
         {products?.map((product: Product, idx: number) => {
           const isHovered = hoveredId === product.id;
           const itemInCart = (cartItems[product.id] ?? 0) > 0;
+          // Reduce stagger delay on mobile
+          const staggerDelay = reduceAnimations ? 0 : idx * 0.02;
 
           return (
             <motion.div
               key={product.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: idx * 0.05 }}
+              transition={{ duration: 0.3, delay: staggerDelay }}
               viewport={{ once: true, amount: 0.3 }}
               className="relative h-full group"
               onMouseEnter={() => setHoveredId(product.id)}
               onMouseLeave={() => setHoveredId(null)}
             >
               <motion.div
-                animate={isHovered ? { y: -8 } : { y: 0 }}
-                transition={{ duration: 0.3 }}
+                animate={isHovered && !reduceAnimations ? { y: -8 } : { y: 0 }}
+                transition={{ duration: 0.2 }}
                 className="relative bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg dark:shadow-slate-900/30 h-full flex flex-col transition-all duration-300"
               >
                 {/* Product image container */}
@@ -94,15 +105,23 @@ function ProductCard() {
                   <motion.img
                     src={product.image}
                     alt={product.title}
-                    animate={isHovered ? { scale: 1.15 } : { scale: 1 }}
-                    transition={{ duration: 0.5 }}
+                    animate={
+                      isHovered && !reduceAnimations
+                        ? { scale: 1.15 }
+                        : { scale: 1 }
+                    }
+                    transition={{ duration: 0.4 }}
                     className="w-full h-full object-cover"
                   />
 
                   {/* Overlay gradient on hover */}
                   <motion.div
-                    animate={isHovered ? { opacity: 1 } : { opacity: 0 }}
-                    transition={{ duration: 0.3 }}
+                    animate={
+                      isHovered && !reduceAnimations
+                        ? { opacity: 1 }
+                        : { opacity: 0 }
+                    }
+                    transition={{ duration: 0.2 }}
                     className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
                   />
 
@@ -161,11 +180,11 @@ function ProductCard() {
                   {/* Details - expanded on hover */}
                   <motion.div
                     animate={
-                      isHovered
+                      isHovered && !reduceAnimations
                         ? { opacity: 1, height: "auto" }
                         : { opacity: 0, height: 0 }
                     }
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.2 }}
                     className="overflow-hidden mb-4"
                   >
                     <motion.p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 pt-3 border-t border-gray-200 dark:border-slate-600">
@@ -180,8 +199,6 @@ function ProductCard() {
                       whileTap={{ scale: 0.95 }}
                       onClick={() => {
                         handleCart(product.id);
-                        // setClickedId(product.id);
-                        // setTimeout(() => setClickedId(null), 600);
                       }}
                       disabled={product.stock <= 0}
                       className={`w-full font-semibold py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm md:text-base ${

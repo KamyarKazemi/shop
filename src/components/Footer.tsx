@@ -9,8 +9,10 @@ import {
 } from "react-icons/fa6";
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useEffect } from "react";
+import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
 
 export default function Footer() {
+  const { reduceAnimations } = useAnimationOptimization();
   const currentYear = new Date().getFullYear();
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
@@ -117,23 +119,27 @@ export default function Footer() {
 
   return (
     <footer className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-200 mt-auto relative overflow-hidden z-0">
-      {/* Animated background elements */}
+      {/* Animated background elements - disabled on reduced motion */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-10 left-10 w-64 h-64 bg-blue-500 opacity-5 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ y: [0, 20, 0], x: [0, -10, 0] }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1,
-          }}
-          className="absolute bottom-10 right-10 w-96 h-96 bg-purple-500 opacity-5 rounded-full blur-3xl"
-        />
+        {!reduceAnimations && (
+          <>
+            <motion.div
+              animate={{ y: [0, -20, 0], x: [0, 10, 0] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-10 left-10 w-64 h-64 bg-blue-500 opacity-5 rounded-full blur-3xl"
+            />
+            <motion.div
+              animate={{ y: [0, 20, 0], x: [0, -10, 0] }}
+              transition={{
+                duration: 10,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 1,
+              }}
+              className="absolute bottom-10 right-10 w-96 h-96 bg-purple-500 opacity-5 rounded-full blur-3xl"
+            />
+          </>
+        )}
       </div>
 
       {/* Main footer content */}
@@ -357,13 +363,17 @@ export default function Footer() {
             className="text-sm text-slate-500"
           >
             © {currentYear} ShopHub. Made with{" "}
-            <motion.span
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1, repeat: Infinity, delay: 1 }}
-              className="text-red-500 inline-block"
-            >
-              ♥
-            </motion.span>{" "}
+            {!reduceAnimations ? (
+              <motion.span
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1, repeat: Infinity, delay: 1 }}
+                className="text-red-500 inline-block"
+              >
+                ♥
+              </motion.span>
+            ) : (
+              <span className="text-red-500 inline-block">♥</span>
+            )}{" "}
             All rights reserved.
           </motion.p>
           <div className="flex flex-col sm:flex-row gap-4 sm:justify-end">
@@ -406,43 +416,51 @@ export default function Footer() {
           >
             <motion.div
               animate={{ y: [0, -4, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
+              transition={
+                reduceAnimations
+                  ? { duration: 0 }
+                  : { duration: 1.5, repeat: Infinity }
+              }
               className="text-2xl"
             >
               <FaArrowUp />
             </motion.div>
-            <motion.div
-              animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute inset-0 bg-blue-500 rounded-full blur-lg opacity-20 -z-10"
-            />
+            {!reduceAnimations && (
+              <motion.div
+                animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="absolute inset-0 bg-blue-500 rounded-full blur-lg opacity-20 -z-10"
+              />
+            )}
           </motion.button>
         )}
       </AnimatePresence>
 
-      {/* Floating hearts */}
-      <AnimatePresence>
-        {showHeart && (
-          <motion.div
-            initial={{
-              x: heartPosition.x,
-              y: heartPosition.y,
-              opacity: 1,
-              scale: 1,
-            }}
-            animate={{
-              x: heartPosition.x + (Math.random() - 0.5) * 200,
-              y: heartPosition.y - 200,
-              opacity: 0,
-              scale: 0,
-            }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="absolute pointer-events-none z-50"
-          >
-            <FaHeart className="text-red-500 text-2xl" />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Floating hearts - disabled on reduced motion */}
+      {!reduceAnimations && (
+        <AnimatePresence>
+          {showHeart && (
+            <motion.div
+              initial={{
+                x: heartPosition.x,
+                y: heartPosition.y,
+                opacity: 1,
+                scale: 1,
+              }}
+              animate={{
+                x: heartPosition.x + (Math.random() - 0.5) * 200,
+                y: heartPosition.y - 200,
+                opacity: 0,
+                scale: 0,
+              }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="absolute pointer-events-none z-50"
+            >
+              <FaHeart className="text-red-500 text-2xl" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
     </footer>
   );
 }

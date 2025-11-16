@@ -1,22 +1,32 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import type { Product } from "../slices/fetchAllProducts";
 
-const fetchAllProducts = createAsyncThunk(
+const BACKEND_URL = "https://shop-backend-jg9e.onrender.com";
+
+export const fetchAllProducts = createAsyncThunk(
   "products/fetch",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(
-        "https://shop-backend-d4qc.onrender.com/api/products"
+      const res = await axios.get(`${BACKEND_URL}/api/products`);
+      const productsWithFullImage = res.data.map((p: Product) => ({
+        ...p,
+        image: `${BACKEND_URL}/images/${p.image}`,
+      }));
+      console.table(productsWithFullImage);
+      return productsWithFullImage;
+    } catch (err: unknown) {
+      const error = err as {
+        response?: { data?: { error?: string } };
+        message?: string;
+      };
+      console.error(
+        "fetchProducts error:",
+        error?.response?.data ?? error?.message
       );
-      console.table(res.data);
-      return res.data;
-    } catch (err: any) {
-      console.error("fetchProducts error:", err?.response?.data ?? err.message);
       return rejectWithValue(
-        err?.response?.data?.error || err?.message || "unknown error"
+        error?.response?.data?.error || error?.message || "unknown error"
       );
     }
   }
 );
-
-export { fetchAllProducts };
