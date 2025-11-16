@@ -4,6 +4,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { CartProvider } from "./contexts/cartContext";
 import store from "./redux/store";
 import { fetchAllProducts } from "./redux/thunks/fetchAllProducts";
+import ProductPage from "./pages/ProductPage";
 
 // Lazy load route components
 const Home = lazy(() => import("./pages/Home"));
