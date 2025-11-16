@@ -4,11 +4,11 @@ import { lazy, Suspense, useEffect } from "react";
 import { CartProvider } from "./contexts/cartContext";
 import store from "./redux/store";
 import { fetchAllProducts } from "./redux/thunks/fetchAllProducts";
-import ProductPage from "./pages/ProductPage";
 
 // Lazy load route components
 const Home = lazy(() => import("./pages/Home"));
 const Cart = lazy(() => import("./components/Cart"));
+const ProductPage = lazy(() => import("./pages/ProductPage"));
 
 // Loading fallback
 const LoadingFallback = () => (
@@ -37,6 +37,14 @@ const router = createBrowserRouter([
           </Suspense>
         ),
         path: "/cart",
+      },
+      {
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <ProductPage />
+          </Suspense>
+        ),
+        path: "/product/:id",
       },
     ],
   },

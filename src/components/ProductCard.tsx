@@ -5,6 +5,7 @@ import type { RootState } from "../redux/store";
 import { CartContext } from "../contexts/cartContext";
 import { motion } from "motion/react";
 import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
+import { Link } from "react-router-dom";
 
 function ProductCard() {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
@@ -85,179 +86,189 @@ function ProductCard() {
           const staggerDelay = reduceAnimations ? 0 : idx * 0.02;
 
           return (
-            <motion.div
+            <Link
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: staggerDelay }}
-              viewport={{ once: true, amount: 0.3 }}
-              className="relative h-full group"
-              onMouseEnter={() => setHoveredId(product.id)}
-              onMouseLeave={() => setHoveredId(null)}
+              to={`/product/${product.id}`}
+              className="relative h-full group no-underline"
             >
               <motion.div
-                animate={isHovered && !reduceAnimations ? { y: -8 } : { y: 0 }}
-                transition={{ duration: 0.2 }}
-                className="relative bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg dark:shadow-slate-900/30 h-full flex flex-col transition-all duration-300"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: staggerDelay }}
+                viewport={{ once: true, amount: 0.3 }}
+                className="relative h-full"
+                onMouseEnter={() => setHoveredId(product.id)}
+                onMouseLeave={() => setHoveredId(null)}
               >
-                {/* Product image container */}
-                <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 aspect-square">
-                  <motion.img
-                    src={product.image}
-                    alt={product.title}
-                    animate={
-                      isHovered && !reduceAnimations
-                        ? { scale: 1.15 }
-                        : { scale: 1 }
-                    }
-                    transition={{ duration: 0.4 }}
-                    className="w-full h-full object-cover"
-                  />
-
-                  {/* Overlay gradient on hover */}
-                  <motion.div
-                    animate={
-                      isHovered && !reduceAnimations
-                        ? { opacity: 1 }
-                        : { opacity: 0 }
-                    }
-                    transition={{ duration: 0.2 }}
-                    className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
-                  />
-
-                  {/* Stock badge */}
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 200 }}
-                    className={`absolute top-2 right-2 sm:top-4 sm:right-4 px-2 py-1 sm:px-3 sm:py-2 rounded-full font-bold text-xs sm:text-sm ${
-                      product.stock > 5
-                        ? "bg-green-500/90 text-white"
-                        : product.stock > 0
-                        ? "bg-orange-500/90 text-white"
-                        : "bg-red-500/90 text-white"
-                    }`}
-                  >
-                    {product.stock > 0 ? `${product.stock}in` : "Out"}
-                  </motion.div>
-                </div>
-
-                {/* Content section */}
-                <div className="p-2 xs:p-3 sm:p-4 md:p-5 flex flex-col flex-1">
-                  {/* Title and rating */}
-                  <motion.h3
-                    animate={
-                      isHovered ? { color: "#0369a1" } : { color: "#1f2937" }
-                    }
-                    className="text-xs sm:text-sm md:text-base lg:text-lg font-bold line-clamp-2 mb-1 sm:mb-2 transition-colors duration-300 dark:text-white"
-                  >
-                    {product.title}
-                  </motion.h3>
-
-                  {/* Price and description */}
-                  <div className="flex-1 mb-2 sm:mb-3 md:mb-4">
-                    <motion.span
+                <motion.div
+                  animate={
+                    isHovered && !reduceAnimations ? { y: -8 } : { y: 0 }
+                  }
+                  transition={{ duration: 0.2 }}
+                  className="relative bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg dark:shadow-slate-900/30 h-full flex flex-col transition-all duration-300"
+                >
+                  {/* Product image container */}
+                  <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 aspect-square">
+                    <motion.img
+                      src={product.image}
+                      alt={product.title}
                       animate={
-                        isHovered
-                          ? { fontSize: "1.1rem" }
-                          : { fontSize: "0.9rem" }
+                        isHovered && !reduceAnimations
+                          ? { scale: 1.15 }
+                          : { scale: 1 }
                       }
-                      className="text-blue-600 font-bold block transition-all duration-300"
-                    >
-                      ${product.price}
-                    </motion.span>
-                    {!isHovered && (
-                      <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-1"
-                      >
-                        {product.caption}
-                      </motion.p>
-                    )}
-                  </div>
+                      transition={{ duration: 0.4 }}
+                      className="w-full h-full object-cover"
+                    />
 
-                  {/* Details - expanded on hover */}
-                  <motion.div
-                    animate={
-                      isHovered && !reduceAnimations
-                        ? { opacity: 1, height: "auto" }
-                        : { opacity: 0, height: 0 }
-                    }
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden mb-4"
-                  >
-                    <motion.p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 pt-3 border-t border-gray-200 dark:border-slate-600">
-                      {product.details}
-                    </motion.p>
-                  </motion.div>
+                    {/* Overlay gradient on hover */}
+                    <motion.div
+                      animate={
+                        isHovered && !reduceAnimations
+                          ? { opacity: 1 }
+                          : { opacity: 0 }
+                      }
+                      transition={{ duration: 0.2 }}
+                      className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
+                    />
 
-                  {/* Action buttons */}
-                  <div className="space-y-1 sm:space-y-2 md:space-y-3 border-t border-gray-200 pt-2 sm:pt-3 md:pt-4">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        handleCart(product.id);
-                      }}
-                      disabled={product.stock <= 0}
-                      className={`w-full font-semibold py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm md:text-base ${
-                        product.stock <= 0
-                          ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                          : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg"
+                    {/* Stock badge */}
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", stiffness: 200 }}
+                      className={`absolute top-2 right-2 sm:top-4 sm:right-4 px-2 py-1 sm:px-3 sm:py-2 rounded-full font-bold text-xs sm:text-sm ${
+                        product.stock > 5
+                          ? "bg-green-500/90 text-white"
+                          : product.stock > 0
+                          ? "bg-orange-500/90 text-white"
+                          : "bg-red-500/90 text-white"
                       }`}
                     >
-                      {product.stock > 0 ? "Add" : "Out"}
-                    </motion.button>
-
-                    {/* Inline quantity controls */}
-                    {product.stock > 0 && itemInCart ? (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-slate-700 dark:to-slate-600 rounded-lg sm:rounded-xl p-1 sm:p-2 border border-blue-200 dark:border-slate-500"
-                      >
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() =>
-                            updateCartItem(
-                              product.id,
-                              (cartItems[product.id] ?? 0) - 1
-                            )
-                          }
-                          className="flex-1 px-1 sm:px-2 py-0.5 sm:py-1 bg-white dark:bg-slate-600 rounded text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 font-bold text-sm transition-colors duration-200"
-                        >
-                          −
-                        </motion.button>
-                        <motion.div
-                          key={cartItems[product.id]}
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 0.3 }}
-                          className="flex-1 text-center font-bold text-blue-600 dark:text-blue-400 text-xs sm:text-sm"
-                        >
-                          {cartItems[product.id]}
-                        </motion.div>
-                        <motion.button
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                          onClick={() =>
-                            updateCartItem(
-                              product.id,
-                              (cartItems[product.id] ?? 0) + 1
-                            )
-                          }
-                          className="flex-1 px-1 sm:px-2 py-0.5 sm:py-1 bg-white rounded text-gray-700 hover:text-green-600 font-bold text-sm transition-colors duration-200"
-                        >
-                          +
-                        </motion.button>
-                      </motion.div>
-                    ) : null}
+                      {product.stock > 0 ? `${product.stock}in` : "Out"}
+                    </motion.div>
                   </div>
-                </div>
+
+                  {/* Content section */}
+                  <div className="p-2 xs:p-3 sm:p-4 md:p-5 flex flex-col flex-1">
+                    {/* Title and rating */}
+                    <motion.h3
+                      animate={
+                        isHovered ? { color: "#0369a1" } : { color: "#1f2937" }
+                      }
+                      className="text-xs sm:text-sm md:text-base lg:text-lg font-bold line-clamp-2 mb-1 sm:mb-2 transition-colors duration-300 dark:text-white"
+                    >
+                      {product.title}
+                    </motion.h3>
+
+                    {/* Price and description */}
+                    <div className="flex-1 mb-2 sm:mb-3 md:mb-4">
+                      <motion.span
+                        animate={
+                          isHovered
+                            ? { fontSize: "1.1rem" }
+                            : { fontSize: "0.9rem" }
+                        }
+                        className="text-blue-600 font-bold block transition-all duration-300"
+                      >
+                        ${product.price}
+                      </motion.span>
+                      {!isHovered && (
+                        <motion.p
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-1"
+                        >
+                          {product.caption}
+                        </motion.p>
+                      )}
+                    </div>
+
+                    {/* Details - expanded on hover */}
+                    <motion.div
+                      animate={
+                        isHovered && !reduceAnimations
+                          ? { opacity: 1, height: "auto" }
+                          : { opacity: 0, height: 0 }
+                      }
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden mb-4"
+                    >
+                      <motion.p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 pt-3 border-t border-gray-200 dark:border-slate-600">
+                        {product.details}
+                      </motion.p>
+                    </motion.div>
+
+                    {/* Action buttons */}
+                    <div className="space-y-1 sm:space-y-2 md:space-y-3 border-t border-gray-200 pt-2 sm:pt-3 md:pt-4">
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCart(product.id);
+                        }}
+                        disabled={product.stock <= 0}
+                        className={`w-full font-semibold py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl transition-all duration-300 text-xs sm:text-sm md:text-base ${
+                          product.stock <= 0
+                            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            : "bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg"
+                        }`}
+                      >
+                        {product.stock > 0 ? "Add" : "Out"}
+                      </motion.button>
+
+                      {/* Inline quantity controls */}
+                      {product.stock > 0 && itemInCart ? (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="flex items-center gap-1 sm:gap-2 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-slate-700 dark:to-slate-600 rounded-lg sm:rounded-xl p-1 sm:p-2 border border-blue-200 dark:border-slate-500"
+                        >
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateCartItem(
+                                product.id,
+                                (cartItems[product.id] ?? 0) - 1
+                              );
+                            }}
+                            className="flex-1 px-1 sm:px-2 py-0.5 sm:py-1 bg-white dark:bg-slate-600 rounded text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 font-bold text-sm transition-colors duration-200"
+                          >
+                            −
+                          </motion.button>
+                          <motion.div
+                            key={cartItems[product.id]}
+                            animate={{ scale: [1, 1.2, 1] }}
+                            transition={{ duration: 0.3 }}
+                            className="flex-1 text-center font-bold text-blue-600 dark:text-blue-400 text-xs sm:text-sm"
+                          >
+                            {cartItems[product.id]}
+                          </motion.div>
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateCartItem(
+                                product.id,
+                                (cartItems[product.id] ?? 0) + 1
+                              );
+                            }}
+                            className="flex-1 px-1 sm:px-2 py-0.5 sm:py-1 bg-white rounded text-gray-700 hover:text-green-600 font-bold text-sm transition-colors duration-200"
+                          >
+                            +
+                          </motion.button>
+                        </motion.div>
+                      ) : null}
+                    </div>
+                  </div>
+                </motion.div>
               </motion.div>
-            </motion.div>
+            </Link>
           );
         })}
       </motion.div>
