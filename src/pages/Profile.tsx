@@ -2,10 +2,10 @@ import { useState } from "react";
 import { motion } from "motion/react";
 
 function Profile() {
-  const [focusedField, setFocusedField] = useState("");
+  const [focusedField, setFocusedField] = useState(null);
   const [isTyping, setIsTyping] = useState({});
 
-  const handleFocus = (fieldName: string) => {
+  const handleFocus = (fieldName) => {
     setFocusedField(fieldName);
   };
 
@@ -13,11 +13,15 @@ function Profile() {
     setFocusedField(null);
   };
 
-  const handleInputChange = (fieldName: string, value: string) => {
+  const handleInputChange = (fieldName, value) => {
     setIsTyping((prev) => ({
       ...prev,
       [fieldName]: value.length > 0,
     }));
+  };
+
+  const handleForm = (e) => {
+    e.preventDefault();
   };
 
   return (
@@ -27,6 +31,7 @@ function Profile() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          onSubmit={() => handleForm()}
           className="bg-gradient-to-br from-slate-900 to-slate-800 p-8 w-full max-w-md flex flex-col items-center justify-center gap-6 rounded-2xl shadow-2xl border border-slate-700"
         >
           <motion.h2
@@ -75,7 +80,6 @@ function Profile() {
               transition={{ type: "spring", stiffness: 300 }}
               className="border-2 border-slate-600 rounded-lg p-3 bg-slate-800 text-white placeholder-slate-500 text-base focus:outline-none transition-all duration-300"
             />
-            {/* @ts-expect-error no strict typing */}
             {isTyping.username && (
               <motion.div
                 initial={{ opacity: 0, width: 0 }}
@@ -123,7 +127,6 @@ function Profile() {
               transition={{ type: "spring", stiffness: 300 }}
               className="border-2 border-slate-600 rounded-lg p-3 bg-slate-800 text-white placeholder-slate-500 text-base focus:outline-none transition-all duration-300"
             />
-            {/* @ts-expect-error no strict typing */}
             {isTyping.password && (
               <motion.div
                 initial={{ opacity: 0, width: 0 }}

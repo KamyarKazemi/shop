@@ -1,7 +1,5 @@
 import { useSelector } from "react-redux";
-import type { Product } from "../redux/slices/fetchAllProducts";
 import { useState, useContext } from "react";
-import type { RootState } from "../redux/store";
 import { CartContext } from "../contexts/cartContext";
 import { motion } from "motion/react";
 import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
@@ -9,11 +7,11 @@ import { Link } from "react-router-dom";
 
 function ProductCard() {
   const [hoveredId, setHoveredId] = useState<number | null>(null);
-  const { handleCart, cartItems, updateCartItem } = useContext(CartContext)!;
+  const { handleCart, cartItems, updateCartItem } = useContext(CartContext);
   const { reduceAnimations } = useAnimationOptimization();
 
   const { products, productsStatus, productsError } = useSelector(
-    (state: RootState) => state.fetchAllProductsState
+    (state) => state.fetchAllProductsState
   );
 
   if (productsStatus === "loading") {
@@ -79,7 +77,7 @@ function ProductCard() {
         transition={{ duration: 0.5 }}
         className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 xs:gap-3 sm:gap-4 md:gap-5 lg:gap-6 max-w-full mx-auto"
       >
-        {products?.map((product: Product, idx: number) => {
+        {products?.map((product, idx) => {
           const isHovered = hoveredId === product.id;
           const itemInCart = (cartItems[product.id] ?? 0) > 0;
           // Reduce stagger delay on mobile

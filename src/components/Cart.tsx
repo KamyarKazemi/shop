@@ -1,17 +1,13 @@
 import { useContext } from "react";
 import { CartContext } from "../contexts/cartContext";
 import { useSelector } from "react-redux";
-import type { RootState } from "../redux/store";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { FaArrowLeft, FaTrash } from "react-icons/fa";
 
 function Cart() {
-  const { cartItems, removeFromCart, updateCartItem } =
-    useContext(CartContext)!;
-  const products = useSelector(
-    (state: RootState) => state.fetchAllProductsState.products
-  );
+  const { cartItems, removeFromCart, updateCartItem } = useContext(CartContext);
+  const products = useSelector((state) => state.fetchAllProductsState.products);
 
   const cartProducts = Object.entries(cartItems)
     .map(([productId, qty]) => {

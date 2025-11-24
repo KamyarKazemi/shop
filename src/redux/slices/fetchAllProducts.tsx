@@ -1,24 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchAllProducts } from "../thunks/fetchAllProducts";
 
-interface Product {
-  id: number;
-  title: string;
-  caption: string;
-  price: string;
-  details: string;
-  image: string;
-  stock: number;
-  comments: { user: string; text: string; rating: number }[];
-}
-
-interface ProductsState {
-  products: Product[] | null;
-  productsStatus: "idle" | "loading" | "success" | "failed";
-  productsError: null | string;
-}
-
-const initialState: ProductsState = {
+const initialState = {
   products: null,
   productsStatus: "idle",
   productsError: null,
@@ -36,15 +19,13 @@ const fetchAllProductsSlice = createSlice({
       })
       .addCase(fetchAllProducts.fulfilled, (state, action) => {
         state.productsStatus = "success";
-        state.products = action.payload as Product[];
+        state.products = action.payload;
       })
       .addCase(fetchAllProducts.rejected, (state, action) => {
         state.productsStatus = "failed";
-        state.productsError =
-          (action.payload as string) || "something went wrong";
+        state.productsError = action.payload || "something went wrong";
       });
   },
 });
 
 export default fetchAllProductsSlice.reducer;
-export type { Product };

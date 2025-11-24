@@ -1,43 +1,20 @@
 import { createContext, useEffect, useState } from "react";
-import type { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { fetchAllProducts } from "../redux/thunks/fetchAllProducts";
-import type { RootState } from "../redux/store";
 import store from "../redux/store";
 import Toast from "../components/Toast";
-
-type Notification = {
-  text: string;
-  type: "error" | "success";
-  count?: number; // updated cart count after the action
-  product?: { id: number; title: string; price?: string | number };
-} | null;
 
 // interface AddedItems {
 //   [productId: string]: number;
 // }
 
-type CartContextType = {
-  cartCount: number;
-  cartItems: Record<number, number>;
-  handleCart: (productId: number, qty?: number) => boolean;
-  removeFromCart: (productId: number) => void;
-  updateCartItem: (productId: number, qty: number) => boolean;
-  refreshProducts: () => void;
-  notification: Notification;
-  setNotification: (n: Notification) => void;
-  cartEntries: object;
-};
+const CartContext = createContext(undefined);
 
-const CartContext = createContext<CartContextType | undefined>(undefined);
+function CartProvider({ children }) {
+  const [cartItems, setCartItems] = useState({});
+  const [notification, setNotification] = useState(null);
 
-function CartProvider({ children }: { children: ReactNode }) {
-  const [cartItems, setCartItems] = useState<Record<number, number>>({});
-  const [notification, setNotification] = useState<Notification>(null);
-
-  const products = useSelector(
-    (state: RootState) => state.fetchAllProductsState.products
-  );
+  const products = useSelector((state) => state.fetchAllProductsState.products);
   const cartEntries = Object.entries(cartItems); // [ [id, qty], [id, qty], ... ]
 
   // persist cartItems to localStorage (save)
@@ -54,8 +31,8 @@ function CartProvider({ children }: { children: ReactNode }) {
     try {
       const raw = localStorage.getItem("cart_items_v1");
       if (raw) {
-        const parsed = JSON.parse(raw) as Record<string, number>;
-        const normalized: Record<number, number> = {};
+        const parsed = JSON.parse(raw);
+        const normalized = {};
         Object.entries(parsed).forEach(([k, v]) => {
           const id = Number(k);
           const qty = Number(v) || 0;
@@ -145,10 +122,9 @@ function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const refreshProducts = () => store.dispatch(fetchAllProducts());
-
   const cartCount = Object.values(cartItems).reduce((acc, v) => acc + v, 0);
 
-  const cartEssentials: CartContextType = {
+  const cartEssentials = {
     cartCount,
     cartEntries,
     cartItems,

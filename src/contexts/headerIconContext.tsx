@@ -13,14 +13,8 @@ import {
 } from "react-icons/fa6";
 import { CartContext } from "./cartContext";
 
-export interface HeaderIcon {
-  id: string;
-  icon: React.ReactNode;
-  label: string;
-}
-
-export const useHeaderIcons = (): HeaderIcon[] => {
-  const { cartCount } = useContext(CartContext)!;
+export const useHeaderIcons = () => {
+  const { cartCount } = useContext(CartContext);
 
   return [
     {

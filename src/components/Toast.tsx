@@ -1,20 +1,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { FaCheck, FaExclamation } from "react-icons/fa";
 
-type Notification = {
-  text: string;
-  type: "error" | "success";
-  count?: number;
-  product?: { id: number; title: string; price?: string | number };
-} | null;
-
-export default function Toast({
-  notification,
-  setNotification,
-}: {
-  notification: Notification;
-  setNotification: (n: Notification) => void;
-}) {
+export default function Toast({ notification, setNotification }) {
   if (!notification) return null;
 
   const isSuccess = notification.type === "success";

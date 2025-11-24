@@ -1,7 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import type { RootState } from "../redux/store";
-import type { Product } from "../redux/slices/fetchAllProducts";
 import { motion, AnimatePresence } from "motion/react";
 import { useContext, useState, useEffect } from "react";
 import { CartContext } from "../contexts/cartContext";
@@ -9,22 +7,18 @@ import { FaStar, FaArrowLeft, FaShoppingCart, FaCheck } from "react-icons/fa";
 import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
 
 function ProductPage() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const { products } = useSelector(
-    (state: RootState) => state.fetchAllProductsState
-  );
-  const { handleCart, cartItems } = useContext(CartContext)!;
+  const { products } = useSelector((state) => state.fetchAllProductsState);
+  const { handleCart, cartItems } = useContext(CartContext);
   const { reduceAnimations, isMobile } = useAnimationOptimization();
 
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [selectedComment, setSelectedComment] = useState<number | null>(null);
+  const [selectedComment, setSelectedComment] = useState(null);
 
-  const product = products?.find((p) => p.id === Number(id)) as
-    | Product
-    | undefined;
+  const product = products?.find((p) => p.id === Number(id));
 
   useEffect(() => {
     if (id && cartItems[Number(id)]) {
