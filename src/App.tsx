@@ -9,6 +9,7 @@ import { fetchAllProducts } from "./redux/thunks/fetchAllProducts";
 const Home = lazy(() => import("./pages/Home"));
 const Cart = lazy(() => import("./components/Cart"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 // Loading fallback
 const LoadingFallback = () => (
@@ -45,6 +46,14 @@ const router = createBrowserRouter([
           </Suspense>
         ),
         path: "/product/:id",
+      },
+      {
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            <Profile />
+          </Suspense>
+        ),
+        path: "/profile",
       },
     ],
   },

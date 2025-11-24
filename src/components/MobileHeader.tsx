@@ -1,27 +1,23 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useContext, useRef, useEffect } from "react";
-import {
-  FaSearch,
-  FaHome,
-  FaShoppingCart,
-  FaUser,
-  FaCog,
-  FaBars,
-  FaTimes,
-  FaStar,
-} from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { CartContext } from "../contexts/cartContext";
 import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
+import { useHeaderIcons } from "../contexts/headerIconContext";
 
 function MobileHeader() {
   const { cartCount } = useContext(CartContext)!;
   const { reduceAnimations } = useAnimationOptimization();
+  const headerIcons = useHeaderIcons();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hoveredActionId, setHoveredActionId] = useState<string | null>(null);
   const [hoveredMenuId, setHoveredMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
+
+  // Use first 4 icons as quick actions
+  const quickActions = headerIcons.slice(0, 4);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -42,34 +38,6 @@ function MobileHeader() {
         document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isMenuOpen]);
-
-  const quickActions = [
-    { id: "home", icon: FaHome, label: "Home", link: "/" },
-    { id: "cart", icon: FaShoppingCart, label: "Cart", link: "/cart" },
-    { id: "search", icon: FaSearch, label: "Search", link: "#" },
-    { id: "profile", icon: FaUser, label: "Profile", link: "#" },
-  ];
-
-  const menuItems = [
-    { id: "home", label: "Home", link: "/", icon: FaHome, emoji: "🏠" },
-    { id: "shop", label: "Shop", link: "#", icon: FaStar, emoji: "⭐" },
-    {
-      id: "cart",
-      label: "Cart",
-      link: "/cart",
-      icon: FaShoppingCart,
-      emoji: "🛒",
-    },
-    { id: "profile", label: "Profile", link: "#", icon: FaUser, emoji: "👤" },
-    { id: "settings", label: "Settings", link: "#", icon: FaCog, emoji: "⚙️" },
-    {
-      id: "support",
-      label: "Help & Support",
-      link: "#",
-      icon: FaSearch,
-      emoji: "🆘",
-    },
-  ];
 
   // Interactive icon animation for quick actions
   const getActionStyle = (id: string) => {
@@ -136,7 +104,6 @@ function MobileHeader() {
             {/* Quick Action Buttons */}
             <div className="flex-1 flex items-center justify-center gap-1 sm:gap-2 h-full">
               {quickActions.map((action, idx) => {
-                const Icon = action.icon;
                 const isCart = action.id === "cart";
                 const isHovered = hoveredActionId === action.id;
 
@@ -155,64 +122,59 @@ function MobileHeader() {
                       stiffness: 300,
                     }}
                   >
-                    <Link
-                      to={action.link}
-                      className="h-full flex items-center justify-center"
+                    <motion.button
+                      onMouseEnter={() => setHoveredActionId(action.id)}
+                      onMouseLeave={() => setHoveredActionId(null)}
+                      whileHover={{ scale: 1.2, y: -3 }}
+                      whileTap={{ scale: 0.85 }}
+                      className={`relative p-2 sm:p-3 rounded-xl transition-all duration-300 flex items-center justify-center ${getActionStyle(
+                        action.id
+                      )}`}
                     >
-                      <motion.button
-                        onMouseEnter={() => setHoveredActionId(action.id)}
-                        onMouseLeave={() => setHoveredActionId(null)}
-                        whileHover={{ scale: 1.2, y: -3 }}
-                        whileTap={{ scale: 0.85 }}
-                        className={`relative p-2 sm:p-3 rounded-xl transition-all duration-300 flex items-center justify-center ${getActionStyle(
-                          action.id
-                        )}`}
+                      <motion.div
+                        animate={
+                          isHovered
+                            ? { scale: 1.3, rotate: 10 }
+                            : { scale: 1, rotate: 0 }
+                        }
+                        transition={{ type: "spring", stiffness: 300 }}
+                        className="flex items-center justify-center text-lg sm:text-xl"
                       >
-                        <motion.div
-                          animate={
-                            isHovered
-                              ? { scale: 1.3, rotate: 10 }
-                              : { scale: 1, rotate: 0 }
-                          }
-                          transition={{ type: "spring", stiffness: 300 }}
-                          className="flex items-center justify-center"
-                        >
-                          <Icon className="text-lg sm:text-xl" />
-                        </motion.div>
+                        {action.icon}
+                      </motion.div>
 
-                        {/* Cart count badge */}
-                        {isCart && cartCount > 0 && (
+                      {/* Cart count badge */}
+                      {isCart && cartCount > 0 && (
+                        <motion.span
+                          initial={{ scale: 0, rotate: -180 }}
+                          animate={{ scale: 1, rotate: 0 }}
+                          transition={{ type: "spring", stiffness: 300 }}
+                          className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-red-600 to-red-700 text-white text-xs font-bold rounded-full shadow-lg"
+                        >
+                          {cartCount}
+                        </motion.span>
+                      )}
+
+                      {/* Tooltip with animation */}
+                      <AnimatePresence>
+                        {isHovered && (
                           <motion.span
-                            initial={{ scale: 0, rotate: -180 }}
-                            animate={{ scale: 1, rotate: 0 }}
-                            transition={{ type: "spring", stiffness: 300 }}
-                            className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-red-600 to-red-700 text-white text-xs font-bold rounded-full shadow-lg"
+                            initial={{ opacity: 0, y: 10, scale: 0.8 }}
+                            animate={{ opacity: 1, y: -40, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.8 }}
+                            transition={{ type: "spring", stiffness: 200 }}
+                            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gradient-to-br from-slate-800 to-slate-700 text-white text-xs rounded-lg whitespace-nowrap shadow-xl border border-slate-600 pointer-events-none"
                           >
-                            {cartCount}
+                            {action.label}
+                            <motion.div
+                              animate={{ scaleY: [0.8, 1, 0.8] }}
+                              transition={{ duration: 1.5, repeat: Infinity }}
+                              className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-700 rounded-full"
+                            />
                           </motion.span>
                         )}
-
-                        {/* Tooltip with animation */}
-                        <AnimatePresence>
-                          {isHovered && (
-                            <motion.span
-                              initial={{ opacity: 0, y: 10, scale: 0.8 }}
-                              animate={{ opacity: 1, y: -40, scale: 1 }}
-                              exit={{ opacity: 0, y: 10, scale: 0.8 }}
-                              transition={{ type: "spring", stiffness: 200 }}
-                              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gradient-to-br from-slate-800 to-slate-700 text-white text-xs rounded-lg whitespace-nowrap shadow-xl border border-slate-600 pointer-events-none"
-                            >
-                              {action.label}
-                              <motion.div
-                                animate={{ scaleY: [0.8, 1, 0.8] }}
-                                transition={{ duration: 1.5, repeat: Infinity }}
-                                className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-700 rounded-full"
-                              />
-                            </motion.span>
-                          )}
-                        </AnimatePresence>
-                      </motion.button>
-                    </Link>
+                      </AnimatePresence>
+                    </motion.button>
                   </motion.div>
                 );
               })}
@@ -293,8 +255,7 @@ function MobileHeader() {
 
             {/* Menu Items Grid */}
             <nav className="relative p-6 grid grid-cols-2 sm:grid-cols-1 gap-3 sm:gap-4">
-              {menuItems.map((item, idx) => {
-                const Icon = item.icon;
+              {headerIcons.map((item, idx) => {
                 const isHovered = hoveredMenuId === item.id;
 
                 return (
@@ -309,89 +270,79 @@ function MobileHeader() {
                       damping: 15,
                     }}
                   >
-                    <Link to={item.link}>
-                      <motion.button
-                        onMouseEnter={() => setHoveredMenuId(item.id)}
-                        onMouseLeave={() => setHoveredMenuId(null)}
-                        onClick={() => setIsMenuOpen(false)}
-                        whileHover={{ scale: 1.05, y: -5 }}
-                        whileTap={{ scale: 0.92 }}
-                        className="w-full relative group overflow-hidden"
-                      >
-                        {/* Gradient background */}
+                    <motion.button
+                      onMouseEnter={() => setHoveredMenuId(item.id)}
+                      onMouseLeave={() => setHoveredMenuId(null)}
+                      onClick={() => setIsMenuOpen(false)}
+                      whileHover={{ scale: 1.05, y: -5 }}
+                      whileTap={{ scale: 0.92 }}
+                      className="w-full relative group overflow-hidden"
+                    >
+                      {/* Gradient background */}
+                      <motion.div
+                        animate={isHovered ? { opacity: 1 } : { opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-2xl pointer-events-none"
+                      />
+
+                      {/* Content */}
+                      <div className="relative px-4 py-6 rounded-2xl border-2 border-slate-700 group-hover:border-blue-500 transition-all duration-300 flex flex-col items-center gap-3">
                         <motion.div
-                          animate={isHovered ? { opacity: 1 } : { opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="absolute inset-0 bg-gradient-to-br from-blue-600/20 to-cyan-600/20 rounded-2xl pointer-events-none"
-                        />
+                          animate={
+                            isHovered
+                              ? {
+                                  scale: 1.3,
+                                  rotate: 15,
+                                  y: -3,
+                                }
+                              : { scale: 1, rotate: 0, y: 0 }
+                          }
+                          transition={{ type: "spring", stiffness: 300 }}
+                          className="text-2xl sm:text-3xl flex items-center justify-center"
+                        >
+                          {item.icon}
+                        </motion.div>
 
-                        {/* Content */}
-                        <div className="relative px-4 py-6 rounded-2xl border-2 border-slate-700 group-hover:border-blue-500 transition-all duration-300 flex flex-col items-center gap-3">
-                          <motion.div
-                            animate={
-                              isHovered
-                                ? {
-                                    scale: 1.3,
-                                    rotate: 15,
-                                    y: -3,
-                                  }
-                                : { scale: 1, rotate: 0, y: 0 }
-                            }
-                            transition={{ type: "spring", stiffness: 300 }}
-                            className="text-2xl sm:text-3xl"
-                          >
-                            <span>{item.emoji}</span>
-                          </motion.div>
+                        <motion.span
+                          animate={
+                            isHovered
+                              ? { color: "#06b6d4", scale: 1 }
+                              : { color: "#cbd5e1", scale: 0.95 }
+                          }
+                          className="font-semibold text-sm sm:text-base text-slate-300"
+                        >
+                          {item.label}
+                        </motion.span>
 
-                          <motion.div
-                            animate={
-                              isHovered ? { opacity: 1 } : { opacity: 0.7 }
-                            }
-                          >
-                            <Icon className="text-xl text-slate-300 group-hover:text-blue-400 transition-colors duration-300" />
-                          </motion.div>
-
-                          <motion.span
-                            animate={
-                              isHovered
-                                ? { color: "#06b6d4", scale: 1 }
-                                : { color: "#cbd5e1", scale: 0.95 }
-                            }
-                            className="font-semibold text-sm sm:text-base text-slate-300"
-                          >
-                            {item.label}
-                          </motion.span>
-
-                          {/* Floating particles on hover - disabled on reduced motion */}
-                          {isHovered && !reduceAnimations && (
-                            <>
-                              {[0, 1, 2].map((i) => (
-                                <motion.div
-                                  key={i}
-                                  initial={{ opacity: 1, scale: 0 }}
-                                  animate={{
-                                    opacity: 0,
-                                    scale: 1,
-                                    y: -40,
-                                    x: Math.cos((i / 3) * Math.PI * 2) * 30,
-                                  }}
-                                  transition={{
-                                    duration: 1,
-                                    delay: i * 0.1,
-                                  }}
-                                  className="absolute w-1.5 h-1.5 bg-blue-400 rounded-full pointer-events-none"
-                                  style={{
-                                    left: "50%",
-                                    top: "50%",
-                                    transform: "translate(-50%, -50%)",
-                                  }}
-                                />
-                              ))}
-                            </>
-                          )}
-                        </div>
-                      </motion.button>
-                    </Link>
+                        {/* Floating particles on hover - disabled on reduced motion */}
+                        {isHovered && !reduceAnimations && (
+                          <>
+                            {[0, 1, 2].map((i) => (
+                              <motion.div
+                                key={i}
+                                initial={{ opacity: 1, scale: 0 }}
+                                animate={{
+                                  opacity: 0,
+                                  scale: 1,
+                                  y: -40,
+                                  x: Math.cos((i / 3) * Math.PI * 2) * 30,
+                                }}
+                                transition={{
+                                  duration: 1,
+                                  delay: i * 0.1,
+                                }}
+                                className="absolute w-1.5 h-1.5 bg-blue-400 rounded-full pointer-events-none"
+                                style={{
+                                  left: "50%",
+                                  top: "50%",
+                                  transform: "translate(-50%, -50%)",
+                                }}
+                              />
+                            ))}
+                          </>
+                        )}
+                      </div>
+                    </motion.button>
                   </motion.div>
                 );
               })}

@@ -1,61 +1,11 @@
-import { FaSearch } from "react-icons/fa";
-import {
-  FaBox,
-  FaCodeMerge,
-  FaFileLines,
-  FaWandMagicSparkles,
-  FaBorderNone,
-  FaGear,
-  FaCartShopping,
-} from "react-icons/fa6";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { CartContext } from "../contexts/cartContext";
 import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
-import { Link } from "react-router-dom";
+import { useHeaderIcons } from "../contexts/headerIconContext";
 
 function DesktopHeader() {
-  const { cartCount } = useContext(CartContext)!;
+  const icons = useHeaderIcons();
   const { reduceAnimations } = useAnimationOptimization();
-
-  const icons = [
-    {
-      id: "box",
-      icon: (
-        <Link to="/">
-          <FaBox />
-        </Link>
-      ),
-      label: "Dashboard",
-    },
-    {
-      id: "cart",
-      icon: (
-        <Link to="/cart">
-          <div className="relative">
-            <FaCartShopping />
-            {cartCount > 0 && (
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className="absolute -top-2 -right-2 inline-flex items-center justify-center px-2 py-0.5 text-[0.65rem] font-bold leading-none text-white bg-gradient-to-br from-red-600 to-red-700 rounded-full shadow-lg"
-              >
-                {cartCount}
-              </motion.span>
-            )}
-          </div>
-        </Link>
-      ),
-      label: "Cart",
-    },
-    { id: "merge", icon: <FaCodeMerge />, label: "Merge Code" },
-    { id: "files", icon: <FaFileLines />, label: "Files" },
-    { id: "magic", icon: <FaWandMagicSparkles />, label: "Ai analyze" },
-    { id: "border", icon: <FaBorderNone />, label: "Borders" },
-    { id: "settings", icon: <FaGear />, label: "Settings" },
-    { id: "search", icon: <FaSearch />, label: "Search for an item" },
-  ];
 
   // Start as collapsed (NO HOVER)
   const [isHover, setIsHover] = useState(false);
