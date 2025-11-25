@@ -1,9 +1,18 @@
 import { useState } from "react";
 import { motion } from "motion/react";
+import { postUser } from "../redux/thunks/postUser";
+import { useDispatch } from "react-redux";
 
 function Profile() {
+  const dispatch = useDispatch();
+
   const [focusedField, setFocusedField] = useState(null);
   const [isTyping, setIsTyping] = useState({});
+  const [value, setVaule] = useState({
+    username: "",
+    password: "",
+    email: "",
+  });
 
   const handleFocus = (fieldName) => {
     setFocusedField(fieldName);
@@ -13,15 +22,24 @@ function Profile() {
     setFocusedField(null);
   };
 
-  const handleInputChange = (fieldName, value) => {
+  const handleInputChange = (fieldName, inputValue) => {
+    // Update the form values
+    setVaule((prev) => ({
+      ...prev,
+      [fieldName]: inputValue,
+    }));
+
+    // Track if field is being typed
     setIsTyping((prev) => ({
       ...prev,
-      [fieldName]: value.length > 0,
+      [fieldName]: inputValue.length > 0,
     }));
   };
 
-  const handleForm = (e) => {
+  const handleForm = async (e) => {
     e.preventDefault();
+    const userInfo = value;
+    await dispatch(postUser(userInfo));
   };
 
   return (
@@ -64,6 +82,8 @@ function Profile() {
               onFocus={() => handleFocus("username")}
               onBlur={handleBlur}
               onChange={(e) => handleInputChange("username", e.target.value)}
+              value={value.username}
+              required
               animate={
                 focusedField === "username"
                   ? {
@@ -111,6 +131,8 @@ function Profile() {
               onFocus={() => handleFocus("password")}
               onBlur={handleBlur}
               onChange={(e) => handleInputChange("password", e.target.value)}
+              value={value.password}
+              required
               animate={
                 focusedField === "password"
                   ? {
@@ -137,12 +159,63 @@ function Profile() {
             )}
           </motion.div>
 
+          {/* email */}
+
+          <motion.div
+            className="w-full flex flex-col gap-2"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <label
+              htmlFor="email"
+              className="text-left text-lg font-semibold text-slate-300"
+            >
+              email
+            </label>
+            <motion.input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="type your email..."
+              onFocus={() => handleFocus("email")}
+              onBlur={handleBlur}
+              onChange={(e) => handleInputChange("email", e.target.value)}
+              value={value.email}
+              required
+              animate={
+                focusedField === "email"
+                  ? {
+                      borderColor: "#06b6d4",
+                      boxShadow: "0 0 20px rgba(6, 182, 212, 0.5)",
+                      scale: 1.02,
+                    }
+                  : {
+                      borderColor: "rgb(71, 85, 105)",
+                      boxShadow: "0 0 0px rgba(6, 182, 212, 0)",
+                      scale: 1,
+                    }
+              }
+              transition={{ type: "spring", stiffness: 300 }}
+              className="border-2 border-slate-600 rounded-lg p-3 bg-slate-800 text-white placeholder-slate-500 text-base focus:outline-none transition-all duration-300"
+            />
+            {isTyping.email && (
+              <motion.div
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: "100%" }}
+                exit={{ opacity: 0, width: 0 }}
+                className="h-1 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full"
+              />
+            )}
+          </motion.div>
+
           {/* Submit Button */}
           <motion.button
             type="button"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
+            typeof="submit"
             whileHover={{
               scale: 1.05,
               boxShadow: "0 20px 40px rgba(6, 182, 212, 0.3)",
