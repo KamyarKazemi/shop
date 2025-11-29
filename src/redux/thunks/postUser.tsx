@@ -1,7 +1,7 @@
 import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-const BACKEND_URL = "https://shop-backend-jg9e.onrender.com";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 interface UserInfo {
   username: string;
@@ -14,7 +14,7 @@ const postUser = createAsyncThunk(
   //I wanna post some info to users
   async (userInfo: UserInfo, { rejectWithValue }) => {
     try {
-      const res = await axios.post(`${BACKEND_URL}/api/users`, userInfo);
+      const res = await axios.post(`${BASE_URL}/api/users`, userInfo);
       console.table("user created: ", res.data);
       return res.data;
     } catch (err) {

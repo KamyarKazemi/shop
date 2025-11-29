@@ -4,7 +4,7 @@ import { postUser } from "../redux/thunks/postUser";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 
-const BACKEND_URL = "https://shop-backend-jg9e.onrender.com"; // ← change to your backend
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 // debouncer
 let debounceTimer;
@@ -17,7 +17,7 @@ function Profile() {
   const dispatch = useDispatch();
 
   const [focusedField, setFocusedField] = useState(null);
-  // const [isTyping, setIsTyping] = useState({});
+  const [isTyping, setIsTyping] = useState({});
 
   const [value, setValue] = useState({
     username: "",
@@ -73,7 +73,7 @@ function Profile() {
 
         try {
           const { data } = await axios.post(
-            `${BACKEND_URL}/api/users/check-availability`,
+            `${BASE_URL}/api/users/check-availability`,
             { username: inputValue }
           );
 
@@ -122,7 +122,7 @@ function Profile() {
 
         try {
           const { data } = await axios.post(
-            `${BACKEND_URL}/api/users/check-availability`,
+            `${BASE_URL}/api/users/check-availability`,
             { email: inputValue }
           );
 

@@ -1,16 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const BACKEND_URL = "https://shop-backend-jg9e.onrender.com";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
 export const fetchAllProducts = createAsyncThunk(
   "products/fetch",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/api/products`);
+      const res = await axios.get(`${BASE_URL}/api/products`);
       const productsWithFullImage = res.data.map((p) => ({
         ...p,
-        image: `${BACKEND_URL}/images/${p.image}`,
+        image: `${BASE_URL}/images/${p.image}`,
       }));
       console.table(productsWithFullImage);
       return productsWithFullImage;
