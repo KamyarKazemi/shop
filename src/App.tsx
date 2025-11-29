@@ -5,6 +5,8 @@ import { CartProvider } from "./contexts/cartContext";
 import store from "./redux/store";
 import { fetchAllProducts } from "./redux/thunks/fetchAllProducts";
 
+import transition from "./framer/transition"; // <-- IMPORTANT
+
 // Lazy load route components
 const Home = lazy(() => import("./pages/Home"));
 const Cart = lazy(() => import("./components/Cart"));
@@ -26,34 +28,30 @@ const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <Home />
-          </Suspense>
+          <Suspense fallback={<LoadingFallback />}>{transition(Home)}</Suspense>
         ),
       },
       {
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <Cart />
-          </Suspense>
-        ),
         path: "/cart",
+        element: (
+          <Suspense fallback={<LoadingFallback />}>{transition(Cart)}</Suspense>
+        ),
       },
       {
-        element: (
-          <Suspense fallback={<LoadingFallback />}>
-            <ProductPage />
-          </Suspense>
-        ),
         path: "/product/:id",
-      },
-      {
         element: (
           <Suspense fallback={<LoadingFallback />}>
-            <Profile />
+            {transition(ProductPage)}
           </Suspense>
         ),
+      },
+      {
         path: "/profile",
+        element: (
+          <Suspense fallback={<LoadingFallback />}>
+            {transition(Profile)}
+          </Suspense>
+        ),
       },
     ],
   },
@@ -65,11 +63,9 @@ function App() {
   }, []);
 
   return (
-    <>
-      <CartProvider>
-        <RouterProvider router={router} />
-      </CartProvider>
-    </>
+    <CartProvider>
+      <RouterProvider router={router} />
+    </CartProvider>
   );
 }
 

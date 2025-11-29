@@ -2,7 +2,6 @@ import Products from "../components/Products";
 import { motion } from "motion/react";
 import { FaShoppingBag, FaTruck, FaAward } from "react-icons/fa";
 import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
-import transition from "../framer/transition";
 
 function Home() {
   const { reduceAnimations } = useAnimationOptimization();
