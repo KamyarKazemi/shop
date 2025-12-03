@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { postUser } from "../redux/thunks/postUser";
 import { useDispatch } from "react-redux";
 import axios from "axios";
@@ -237,6 +237,10 @@ function Profile() {
             {availability.usernameChecking && (
               <p className="text-blue-400 text-sm">Checking username...</p>
             )}
+
+            {availability.usernameAvailable && (
+              <p className="text-blue-400 text-sm">Username Available!</p>
+            )}
           </motion.div>
 
           {/* PASSWORD FIELD */}
@@ -333,6 +337,12 @@ function Profile() {
             {availability.emailChecking && (
               <p className="text-blue-400 text-sm">Checking email...</p>
             )}
+
+            <AnimatePresence>
+              {availability.emailAvailable && (
+                <p className="text-blue-400 text-sm">Email Available!</p>
+              )}
+            </AnimatePresence>
           </motion.div>
 
           {/* SUBMIT */}
