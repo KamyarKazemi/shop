@@ -15,7 +15,7 @@ function Root() {
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br">
       <Suspense fallback={<HeaderFallback />}>
         {isMobile ? <MobileHeader /> : <DesktopHeader />}
       </Suspense>

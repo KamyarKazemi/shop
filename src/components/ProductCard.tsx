@@ -149,12 +149,7 @@ function ProductCard() {
                   {/* Content section */}
                   <div className="p-2 xs:p-3 sm:p-4 md:p-5 flex flex-col flex-1">
                     {/* Title and rating */}
-                    <motion.h3
-                      animate={
-                        isHovered ? { color: "#0369a1" } : { color: "#1f2937" }
-                      }
-                      className="text-xs sm:text-sm md:text-base lg:text-lg font-bold line-clamp-2 mb-1 sm:mb-2 transition-colors duration-300 dark:text-white"
-                    >
+                    <motion.h3 className="text-xs text-[#ccc] sm:text-sm md:text-base lg:text-lg font-bold line-clamp-2 mb-1 sm:mb-2 transition-colors duration-300 hover:text-[#0369a1]">
                       {product.title}
                     </motion.h3>
 

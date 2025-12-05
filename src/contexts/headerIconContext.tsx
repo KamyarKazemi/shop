@@ -21,7 +21,7 @@ export const useHeaderIcons = () => {
       id: "box",
       icon: (
         <Link to="/">
-          <FaBox />
+          <FaBox className="text-[#ccc]" />
         </Link>
       ),
       label: "Dashboard",
@@ -31,7 +31,7 @@ export const useHeaderIcons = () => {
       icon: (
         <Link to="/cart">
           <div className="relative">
-            <FaCartShopping />
+            <FaCartShopping className="text-[#ccc]" />
             {cartCount > 0 && (
               <motion.span
                 initial={{ scale: 0 }}
@@ -51,15 +51,35 @@ export const useHeaderIcons = () => {
       id: "profile",
       icon: (
         <Link to="/profile">
-          <FaCircleUser />
+          <FaCircleUser className="text-[#ccc]" />
         </Link>
       ),
       label: "Profile",
     },
-    { id: "files", icon: <FaFileLines />, label: "Files" },
-    { id: "magic", icon: <FaWandMagicSparkles />, label: "Ai analyze" },
-    { id: "border", icon: <FaBorderNone />, label: "Borders" },
-    { id: "settings", icon: <FaGear />, label: "Settings" },
-    { id: "search", icon: <FaSearch />, label: "Search for an item" },
+    {
+      id: "files",
+      icon: <FaFileLines className="text-[#ccc]" />,
+      label: "Files",
+    },
+    {
+      id: "magic",
+      icon: <FaWandMagicSparkles className="text-[#ccc]" />,
+      label: "Ai analyze",
+    },
+    {
+      id: "border",
+      icon: <FaBorderNone className="text-[#ccc]" />,
+      label: "Borders",
+    },
+    {
+      id: "settings",
+      icon: <FaGear className="text-[#ccc]" />,
+      label: "Settings",
+    },
+    {
+      id: "search",
+      icon: <FaSearch className="text-[#ccc]" />,
+      label: "Search for an item",
+    },
   ];
 };
