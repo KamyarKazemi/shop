@@ -16,8 +16,7 @@ import { HoverContext } from "../App";
 
 export const useHeaderIcons = () => {
   const { cartCount } = useContext(CartContext);
-
-  const { isHover, setIsHover } = useContext(HoverContext);
+  const { isHover } = useContext(HoverContext);
 
   return [
     {
@@ -56,7 +55,7 @@ export const useHeaderIcons = () => {
         <Link to="/profile">
           <div className="flex items-center gap-x-2">
             <FaCircleUser className="text-[#ccc]" />
-            <h1>hello profile</h1>
+            {isHover && <h1>hello profile</h1>}
           </div>
         </Link>
       ),

@@ -1,16 +1,17 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
 import { useHeaderIcons } from "../contexts/headerIconContext";
+import { HoverContext } from "../App";
 
 function DesktopHeader() {
   const icons = useHeaderIcons();
   const { reduceAnimations } = useAnimationOptimization();
+  const { isHover, setIsHover } = useContext(HoverContext);
 
-  // Start as collapsed (NO HOVER)
-  const [isHover, setIsHover] = useState(false);
-  const [active, setActive] = useState("box");
+  // Local hover state for individual icon reactions
   const [hoveredId, setHoveredId] = useState<string | null>(null);
+  const [active, setActive] = useState("box");
 
   // Calculate icon reaction based on hover state
   const getIconReaction = (itemId: string) => {
