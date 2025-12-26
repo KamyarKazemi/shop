@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { postUser } from "../redux/thunks/postUser";
 import { useDispatch } from "react-redux";
@@ -164,11 +164,60 @@ function Profile() {
     }
   };
 
-  // SUBMIT --------------------------------------------------------------
+  /// user logging demo
+  const [user, setUser] = useState(() => {
+    // Try to load from localStorage initially
+    const savedUser = localStorage.getItem("user");
+    return savedUser
+      ? JSON.parse(savedUser)
+      : {
+          id: null,
+          username: "",
+          email: "",
+          cartItems: [],
+          CartItemsNumber: 0,
+        };
+  });
+
+  ///
+
+  ///
   const handleForm = async (e) => {
     e.preventDefault();
-    await dispatch(postUser(value));
+
+    const response = await dispatch(postUser(value)); // sends to backend
+
+    if (response) {
+      console.log("saving...");
+      // Only store safe info
+      const safeUser = {
+        id: response.id,
+        username: response.username,
+        email: response.email,
+        cartItems: response.cartItems,
+        CartItemsNumber: response.CartItemsNumber,
+      };
+
+      setUser(safeUser); // React state
+      localStorage.setItem("user", JSON.stringify(safeUser)); // persist login
+    }
   };
+
+  ///
+
+  // SUBMIT --------------------------------------------------------------
+  // const handleForm = async (e) => {
+  //   e.preventDefault();
+  //   await dispatch(postUser(value));
+  // };
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+      console.log("saved!");
+    }
+  }, []);
 
   return (
     <>

@@ -51,7 +51,10 @@ export const useHeaderIcons = () => {
       id: "profile",
       icon: (
         <Link to="/profile">
-          <FaCircleUser className="text-[#ccc]" />
+          <div className="flex items-center gap-x-2">
+            <FaCircleUser className="text-[#ccc]" />
+            <h1>hello profile</h1>
+          </div>
         </Link>
       ),
       label: "Profile",
