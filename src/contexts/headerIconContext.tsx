@@ -12,9 +12,12 @@ import {
   FaCartShopping,
 } from "react-icons/fa6";
 import { CartContext } from "./cartContext";
+import { HoverContext } from "../App";
 
 export const useHeaderIcons = () => {
   const { cartCount } = useContext(CartContext);
+
+  const { isHover, setIsHover } = useContext(HoverContext);
 
   return [
     {

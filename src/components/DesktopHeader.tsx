@@ -2,7 +2,6 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useAnimationOptimization } from "../hooks/useAnimationOptimization";
 import { useHeaderIcons } from "../contexts/headerIconContext";
-import { createContext } from "react";
 
 function DesktopHeader() {
   const icons = useHeaderIcons();

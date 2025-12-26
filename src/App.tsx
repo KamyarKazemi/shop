@@ -1,9 +1,13 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./Root";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { CartProvider } from "./contexts/cartContext";
 import store from "./redux/store";
 import { fetchAllProducts } from "./redux/thunks/fetchAllProducts";
+import { createContext } from "react";
+
+// hover context
+const HoverContext = createContext();
 
 // Lazy load route components
 const Home = lazy(() => import("./pages/Home"));
@@ -64,13 +68,18 @@ function App() {
     store.dispatch(fetchAllProducts());
   }, []);
 
+  const [isHover, setIsHover] = useState(false);
+
   return (
     <>
-      <CartProvider>
-        <RouterProvider router={router} />
-      </CartProvider>
+      <HoverContext.Provider value={{ isHover, setIsHover }}>
+        <CartProvider>
+          <RouterProvider router={router} />
+        </CartProvider>
+      </HoverContext.Provider>
     </>
   );
 }
 
 export default App;
+export { HoverContext };
